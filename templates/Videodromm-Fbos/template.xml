@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<cinder>
+<template name="Videodromm: Fbos" parent="org.libcinder.apptemplates.basicopengl">
+	<requires>com.videodromm.Videodromm-Fbos</requires>
+	<source replaceContents="true" replaceName="true">src/_TBOX_PREFIX_App.cpp</source>
+	<asset>assets/0.jpg</asset>
+	<asset>assets/passthru.vert</asset>
+	<asset>assets/passthru.frag</asset>
+	<asset>assets/fbos.xml</asset>
+	<asset>assets/fbos.json</asset>
+</template>
+</cinder>
