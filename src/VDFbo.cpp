@@ -81,8 +81,8 @@ namespace VideoDromm {
 			fbo.setTag("fbo");
 			fbo.setAttribute("id", i + 1);
 			switch (VDFbolist[i]->mType) {
-				case TEXTURE: fbo.setAttribute("fbotype", "texture"); break;
-				default: fbo.setAttribute("fbotype", "unknown"); break;
+			case TEXTURE: fbo.setAttribute("fbotype", "texture"); break;
+			default: fbo.setAttribute("fbotype", "unknown"); break;
 			}
 			// details specific to texture type
 			fbo.push_back(VDFbolist[i]->toXml());
@@ -154,15 +154,16 @@ namespace VideoDromm {
 		mFilePathOrText = xml.getAttributeValue<string>("filepath", "");
 		if (mFilePathOrText.length() > 0) {
 			fs::path fullPath = getAssetPath("") / mFilePathOrText;// TODO / mVDSettings->mAssetsPath
-			if (fs::exists(fullPath)) {
 
-				try {
 
-					CI_LOG_V("successfully loaded " + mFilePathOrText);
-				}
-				catch (Exception &exc) {
-					CI_LOG_EXCEPTION("error loading ", exc);
-				}
+			try {
+				fs::path fullPath = getAssetPath("") / mFilePathOrText;// TODO / mVDSettings->mAssetsPath
+				mTexs.push_back(TextureImage::create());
+				//mTexs[0]->
+				CI_LOG_V("successfully loaded " + mFilePathOrText);
+			}
+			catch (Exception &exc) {
+				CI_LOG_EXCEPTION("error loading ", exc);
 			}
 		}
 	}
@@ -175,12 +176,13 @@ namespace VideoDromm {
 	}
 	ci::gl::Texture2dRef FboTexture::getTexture() {
 
-		gl::ScopedFramebuffer fbScp(mFbo);
+		/* TODO gl::ScopedFramebuffer fbScp(mFbo);
 		gl::clear(Color::black());
 		// setup the viewport to match the dimensions of the FBO
 		gl::ScopedViewport scpVp(ivec2(0), mFbo->getSize());
-		
-		return mFbo->getColorTexture();	
+
+		return mFbo->getColorTexture();	*/
+		return mTexs[0]->getTexture();
 	}
 
 	FboTexture::~FboTexture(void) {

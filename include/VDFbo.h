@@ -17,6 +17,7 @@
 using namespace ci;
 using namespace ci::app;
 using namespace std;
+using namespace VideoDromm;
 
 namespace VideoDromm
 {
@@ -63,7 +64,7 @@ namespace VideoDromm
 		int								mWidth;
 		int								mHeight;
 		//! Fbo
-		ci::gl::FboRef			mFbo;
+		ci::gl::FboRef					mFbo;
 	};
 
 
@@ -90,8 +91,9 @@ namespace VideoDromm
 		//! 
 		virtual ci::gl::Texture2dRef	getTexture() override;		
 	private:
-		ci::gl::Texture2dRef	mTexture;
 		gl::FboRef				mFbo;
+		VDTextureList			mTexs;
+
 	};
 
 }
