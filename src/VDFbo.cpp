@@ -137,7 +137,9 @@ namespace VideoDromm {
 	ci::gl::TextureRef VDFbo::getTexture() {
 		return mFbo->getColorTexture();
 	}
-	// --------- child classes
+	/* 
+	*   child classes
+	*/
 	// FboTexture
 	FboTexture::FboTexture() {
 		// fbo
@@ -159,7 +161,7 @@ namespace VideoDromm {
 			try {
 				fs::path fullPath = getAssetPath("") / mFilePathOrText;// TODO / mVDSettings->mAssetsPath
 				mTexs.push_back(TextureImage::create());
-				//mTexs[0]->
+				mTexs[0]->loadImageFromFileFullPath(fullPath.string());
 				CI_LOG_V("successfully loaded " + mFilePathOrText);
 			}
 			catch (Exception &exc) {
