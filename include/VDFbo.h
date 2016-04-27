@@ -41,8 +41,8 @@ namespace VideoDromm
 		//! returns the type
 		FboType							getType() { return mType; };
 		std::string						getName();
-		bool							isFlipH() { return mFlipH; };
-		bool							isFlipV() { return mFlipV; };
+		//bool							isFlipH() { return mFlipH; };
+		//bool							isFlipV() { return mFlipV; };
 		int								getTextureWidth();
 		int								getTextureHeight();
 		//!
@@ -55,10 +55,11 @@ namespace VideoDromm
 		static void						writeSettings(const VDFboList &VDFbolist, const ci::DataTargetRef &target);
 		// move, rotate, zoom methods
 		void							setPosition(int x, int y);
+		void							setZoom(float aZoom);
 	protected:
 		std::string						mName;
-		bool							mFlipV;
-		bool							mFlipH;
+		//bool							mFlipV;
+		//bool							mFlipH;
 		FboType							mType;
 		std::string						mFilePathOrText;
 		//bool							mTopDown;
@@ -66,6 +67,7 @@ namespace VideoDromm
 		int								mHeight;
 		float							mPosX;
 		float							mPosY;
+		float							mZoom;
 		//! Fbo
 		ci::gl::FboRef					mFbo;
 		//! Shaders

@@ -10,9 +10,9 @@ namespace VideoDromm {
 	VDFbo::VDFbo(FboType aType)
 		: mFilePathOrText("")
 		, mName("")
-		//, mTopDown(true)
+		/*, mTopDown(true)
 		, mFlipV(false)
-		, mFlipH(true)
+		, mFlipH(true)*/
 		, mWidth(640)
 		, mHeight(480)
 	{
@@ -21,7 +21,7 @@ namespace VideoDromm {
 			mName = mFilePathOrText;
 		}
 		mPosX = mPosY = 0.0f;
-
+		mZoom = 1.0f;
 		// init the fbo whatever happens next
 		gl::Fbo::Format format;
 		//format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
@@ -167,8 +167,11 @@ namespace VideoDromm {
 
 	}
 	void VDFbo::setPosition(int x, int y) {
-		mPosX = (float)x/(float)mWidth;
-		mPosY = (float)y/(float)mHeight;
+		mPosX = ((float)x/(float)mWidth) - 0.5;
+		mPosY = ((float)y/(float)mHeight) - 0.5;
+	}
+	void VDFbo::setZoom(float aZoom) {
+		mZoom = aZoom;
 	}
 	int VDFbo::getTextureWidth() {
 		return mWidth;
@@ -250,6 +253,7 @@ namespace VideoDromm {
 		mShader->uniform("iResolution", vec3(mWidth, mHeight, 1.0));
 		mShader->uniform("iChannelResolution[0]", iChannelResolution0);
 		mShader->uniform("iChannel0", 0);
+		mShader->uniform("iZoom", mZoom);
 		gl::ScopedTextureBind tex(mTexs[0]->getTexture());
 		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
 
