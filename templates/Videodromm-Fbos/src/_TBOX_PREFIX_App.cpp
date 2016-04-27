@@ -16,6 +16,7 @@ public:
 	void setup() override;
 	void mouseDown( MouseEvent event ) override;
 	void mouseMove( MouseEvent event ) override;
+	void fileDrop(FileDropEvent event) override;
 	void update() override;
 	void draw() override;
 	void cleanup() override;
@@ -41,7 +42,27 @@ void _TBOX_PREFIX_App::setup()
 
 	}
 }
+void _TBOX_PREFIX_App::fileDrop(FileDropEvent event)
+{
+	int index = 1;
+	string ext = "";
+	// use the last of the dropped files
+	fs::path mPath = event.getFile(event.getNumFiles() - 1);
+	string mFile = mPath.string();
+	int dotIndex = mFile.find_last_of(".");
+	int slashIndex = mFile.find_last_of("\\");
 
+	if (dotIndex != std::string::npos && dotIndex > slashIndex) ext = mFile.substr(mFile.find_last_of(".") + 1);
+
+	if (ext == "png" || ext == "jpg")
+	{
+		//mFbos[0]->loadImageFile(index, mFile);
+	}
+	else if (ext == "glsl")
+	{		
+		int rtn = mFbos[0]->loadPixelFragmentShader(mFile);
+	}
+}
 void _TBOX_PREFIX_App::update()
 {
 
