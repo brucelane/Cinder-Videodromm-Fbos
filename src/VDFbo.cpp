@@ -10,7 +10,7 @@ namespace VideoDromm {
 	VDFbo::VDFbo(FboType aType)
 		: mFilePathOrText("")
 		, mName("")
-		, mTopDown(true)
+		//, mTopDown(true)
 		, mFlipV(false)
 		, mFlipH(true)
 		, mWidth(640)
@@ -20,10 +20,67 @@ namespace VideoDromm {
 		if (mName.length() == 0) {
 			mName = mFilePathOrText;
 		}
+		mPosX = mPosY = 0.0f;
+
 		// init the fbo whatever happens next
 		gl::Fbo::Format format;
 		//format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
 		mFbo = gl::Fbo::create(mWidth, mHeight, format.depthTexture());
+		// init with passthru shader
+		mShaderName = "passthru";
+		// load shadertoy uniform variables declarations
+		shaderInclude = loadString(loadAsset("shadertoy.inc"));
+		try
+		{
+			fs::path vertexFile = getAssetPath("") / "passthru.vert";
+			if (fs::exists(vertexFile)) {
+				mPassthruVextexShaderString = loadString(loadAsset("passthru.vert"));
+				CI_LOG_V("passthru.vert loaded");
+			}
+			else
+			{
+				CI_LOG_V("passthru.vert does not exist, should quit");
+			}
+		}
+		catch (gl::GlslProgCompileExc &exc)
+		{
+			mError = string(exc.what());
+			CI_LOG_V("unable to load/compile passthru shader:" + string(exc.what()));
+		}
+		catch (const std::exception &e)
+		{
+			mError = string(e.what());
+			CI_LOG_V("unable to load passthru shader:" + string(e.what()));
+		}
+		// load passthru fragment shader
+		try
+		{
+			fs::path fragFile = getAssetPath("") / "passthru.frag";
+			if (fs::exists(fragFile)) {
+				mPassthruFragmentShaderString = loadString(loadAsset("passthru.frag"));
+			}
+			else
+			{
+				mError = "passthru.frag does not exist, should quit";
+				CI_LOG_V(mError);
+			}
+			mPassThruShader = gl::GlslProg::create(mPassthruVextexShaderString, mPassthruFragmentShaderString);
+			CI_LOG_V("passthru.frag loaded and compiled");
+		}
+		catch (gl::GlslProgCompileExc &exc)
+		{
+			mError = string(exc.what());
+			CI_LOG_V("unable to load/compile passthru shader:" + string(exc.what()));
+		}
+		catch (const std::exception &e)
+		{
+			mError = string(e.what());
+			CI_LOG_V("unable to load passthru shader:" + string(e.what()));
+		}
+
+		mShader = gl::GlslProg::create(mPassthruVextexShaderString, mPassthruFragmentShaderString);
+		mShader->setLabel(mShaderName);
+
 	}
 	VDFbo::~VDFbo(void) {
 
@@ -109,7 +166,10 @@ namespace VideoDromm {
 	{
 
 	}
-
+	void VDFbo::setPosition(int x, int y) {
+		mPosX = (float)x/(float)mWidth;
+		mPosY = (float)y/(float)mHeight;
+	}
 	int VDFbo::getTextureWidth() {
 		return mWidth;
 	};
@@ -177,14 +237,25 @@ namespace VideoDromm {
 		return xml;
 	}
 	ci::gl::Texture2dRef FboTexture::getTexture() {
-
-		/* TODO gl::ScopedFramebuffer fbScp(mFbo);
+		iChannelResolution0 = vec3(mPosX, mPosY, 0.5);
+		//iChannelResolution0 = vec3(0.1, 0.2, 0.5);
+		//mPosX = 20;
+		//return mTexs[0]->getTexture();
+		gl::ScopedFramebuffer fbScp(mFbo);
 		gl::clear(Color::black());
 		// setup the viewport to match the dimensions of the FBO
 		gl::ScopedViewport scpVp(ivec2(0), mFbo->getSize());
+		gl::ScopedGlslProg shaderScp(mShader);
+		//mShader->bind();
+		mShader->uniform("iResolution", vec3(mWidth, mHeight, 1.0));
+		mShader->uniform("iChannelResolution[0]", iChannelResolution0);
+		mShader->uniform("iChannel0", 0);
+		gl::ScopedTextureBind tex(mTexs[0]->getTexture());
+		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
 
-		return mFbo->getColorTexture();	*/
-		return mTexs[0]->getTexture();
+
+
+		return mFbo->getColorTexture();
 	}
 
 	FboTexture::~FboTexture(void) {

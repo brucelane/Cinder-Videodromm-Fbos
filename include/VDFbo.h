@@ -53,18 +53,35 @@ namespace VideoDromm
 		static VDFboList				readSettings(const ci::DataSourceRef &source);
 		//! write a xml file
 		static void						writeSettings(const VDFboList &VDFbolist, const ci::DataTargetRef &target);
-
+		// move, rotate, zoom methods
+		void							setPosition(int x, int y);
 	protected:
 		std::string						mName;
 		bool							mFlipV;
 		bool							mFlipH;
 		FboType							mType;
 		std::string						mFilePathOrText;
-		bool							mTopDown;
+		//bool							mTopDown;
 		int								mWidth;
 		int								mHeight;
+		float							mPosX;
+		float							mPosY;
 		//! Fbo
 		ci::gl::FboRef					mFbo;
+		//! Shaders
+		gl::GlslProgRef					mShader;
+		string							mShaderName;
+		//! default vertex shader
+		std::string						mPassthruVextexShaderString;
+		//! default fragment shader
+		std::string						mPassthruFragmentShaderString;
+		//! passthru shader
+		gl::GlslProgRef					mPassThruShader;
+		// include shader lines
+		std::string						shaderInclude;
+		string							mError;
+		// uniforms
+		vec3							iChannelResolution0;
 	};
 
 
