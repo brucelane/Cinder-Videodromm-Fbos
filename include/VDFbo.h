@@ -71,14 +71,13 @@ namespace VideoDromm
 		//! Fbo
 		ci::gl::FboRef					mFbo;
 		//! Shaders
-		gl::GlslProgRef					mShader;
 		string							mShaderName;
 		//! default vertex shader
 		std::string						mPassthruVextexShaderString;
 		//! default fragment shader
-		std::string						mPassthruFragmentShaderString;
+		std::string						mFboTextureFragmentShaderString;
 		//! passthru shader
-		gl::GlslProgRef					mPassThruShader;
+		gl::GlslProgRef					mFboTextureShader;
 		// include shader lines
 		std::string						shaderInclude;
 		string							mError;
