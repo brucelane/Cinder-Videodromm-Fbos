@@ -1,3 +1,4 @@
+#version 150
 uniform vec3        iResolution;         	// viewport resolution (in pixels)
 uniform sampler2D   iChannel0;				// input channel 0 (TODO: support samplerCube)
 uniform vec3      	iChannelResolution[4]; 	// channel resolution (in pixels)
@@ -13,7 +14,7 @@ void main( void )
 	float yZ = (uv.y - 0.5)*iZoom*2.0;
 	vec2 cZ = vec2(xZ, yZ);
 
-	vec4 tex = texture2D(iChannel0, vec2(cZ.x-iChannelResolution[0].x,cZ.y-iChannelResolution[0].y));
+	vec4 tex = texture(iChannel0, vec2(cZ.x-iChannelResolution[0].x,cZ.y-iChannelResolution[0].y));
 	 
 	oColor 		= tex;
 }
