@@ -15,6 +15,7 @@ public:
 
 	void setup() override;
 	void mouseDown( MouseEvent event ) override;
+	void mouseMove( MouseEvent event ) override;
 	void update() override;
 	void draw() override;
 	void cleanup() override;
@@ -36,7 +37,7 @@ void _TBOX_PREFIX_App::setup()
 	}
 	else {
 		// otherwise create a texture from scratch
-		mFbos.push_back(FboImage::create());
+		mFbos.push_back(FboTexture::create());
 
 	}
 }
@@ -55,7 +56,13 @@ void _TBOX_PREFIX_App::cleanup()
 }
 void _TBOX_PREFIX_App::mouseDown(MouseEvent event)
 {
-    
+	mFbos[0]->setZoom((float)event.getX()/640.0f);
+
+}
+void _TBOX_PREFIX_App::mouseMove(MouseEvent event)
+{
+	mFbos[0]->setPosition(event.getX(), event.getY());
+
 }
 
 void _TBOX_PREFIX_App::draw()
