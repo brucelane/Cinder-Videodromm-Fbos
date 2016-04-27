@@ -82,7 +82,85 @@ namespace VideoDromm {
 	VDFbo::~VDFbo(void) {
 
 	}
+	int VDFbo::loadPixelFragmentShader(string aFilePath)
+	{
+		int rtn = -1;
+		// reset 
+		//mVDSettings->iFade = false;
+		//mVDSettings->controlValues[22] = 1.0f;
+		try
+		{
+			fs::path fr = aFilePath;
+			string name = "unknown";
+			string mFile = fr.string();
+			if (mFile.find_last_of("\\") != std::string::npos) name = mFile.substr(mFile.find_last_of("\\") + 1);
+			//mFragFileName = name;
+			if (fs::exists(fr))
+			{
+				//validFrag = false;
+				std::string fs = shaderInclude + loadString(loadFile(aFilePath));
+				rtn = setGLSLString(fs, name);
+				if (rtn > -1)
+				{
+					//CI_LOG_V(mFragFile + " loaded and compiled");
+					//mVDSettings->mMsg = name + " loadPixelFragmentShader success";
+					//mVDSettings->newMsg = true;
+					//mFragmentShadersNames[rtn] = name;
+					mFboTextureShader->setLabel(name);
+				}
+			}
+			else
+			{
+				//CI_LOG_V(mFragFile + " does not exist");
+			}
+		}
+		catch (gl::GlslProgCompileExc &exc)
+		{
+			mError = string(exc.what());
+			CI_LOG_V(aFilePath + " unable to load/compile shader err:" + mError);
+			//mVDSettings->mMsg = mError;
+			//mVDSettings->newMsg = true;
+		}
+		catch (const std::exception &e)
+		{
+			mError = string(e.what());
+			CI_LOG_V(aFilePath + " unable to load shader err:" + mError);
+			//mVDSettings->mMsg = mError;
+			//mVDSettings->newMsg = true;
+		}
 
+		return rtn;
+	}
+
+	int VDFbo::setGLSLString(string pixelFrag, string name)
+	{
+		int foundIndex = 0;
+
+		try
+		{
+			mFboTextureShader = gl::GlslProg::create(mPassthruVextexShaderString, pixelFrag);
+			mShaderName = name;
+
+			//preview the new loaded shader
+			//mVDSettings->mPreviewFragIndex = foundIndex;
+			CI_LOG_V("setGLSLString success");
+			//mVDSettings->mMsg = name + " setGLSLString success";
+			//mVDSettings->newMsg = true;
+			mError = "";
+			//validFrag = true;
+		}
+		catch (gl::GlslProgCompileExc exc)
+		{
+			//validFrag = false;
+			// TODO CI_LOG_E("Problem Compiling ImGui::Renderer shader " << exc.what());
+			foundIndex = -1;
+			mError = string(exc.what());
+			//mVDSettings->mMsg = "setGLSLString file: " + name + " error:" + mError;
+			//mVDSettings->newMsg = true;
+			//CI_LOG_V(mVDSettings->mMsg);
+		}
+		return foundIndex;
+	}
 	VDFboList VDFbo::readSettings(const DataSourceRef &source)
 	{
 		XmlTree			doc;

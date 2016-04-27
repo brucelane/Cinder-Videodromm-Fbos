@@ -56,6 +56,10 @@ namespace VideoDromm
 		// move, rotate, zoom methods
 		void							setPosition(int x, int y);
 		void							setZoom(float aZoom);
+		// shader
+		int							loadPixelFragmentShader(string aFilePath);
+		int							setGLSLString(string pixelFrag, string name);
+
 	protected:
 		std::string						mName;
 		//bool							mFlipV;
@@ -99,7 +103,6 @@ namespace VideoDromm
 		//!
 		virtual	XmlTree	toXml() const override;
 
-	public:
 		FboTexture();
 		virtual ~FboTexture(void);
 
