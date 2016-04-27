@@ -216,10 +216,7 @@ namespace VideoDromm {
 		mFilePathOrText = xml.getAttributeValue<string>("filepath", "");
 		if (mFilePathOrText.length() > 0) {
 			fs::path fullPath = getAssetPath("") / mFilePathOrText;// TODO / mVDSettings->mAssetsPath
-
-
 			try {
-				fs::path fullPath = getAssetPath("") / mFilePathOrText;// TODO / mVDSettings->mAssetsPath
 				mTexs.push_back(TextureImage::create());
 				mTexs[0]->loadImageFromFileFullPath(fullPath.string());
 				CI_LOG_V("successfully loaded " + mFilePathOrText);
