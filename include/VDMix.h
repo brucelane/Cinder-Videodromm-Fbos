@@ -27,8 +27,8 @@ namespace VideoDromm
 
 	class VDMix: public std::enable_shared_from_this < VDMix > {
 	public:
-		typedef enum { UNKNOWN, TEXTURE, MIX } FboType;
-		VDMix( FboType aType = UNKNOWN);
+		typedef enum { MIX } MixType;
+		VDMix(MixType aType = MIX);
 		~VDMix( void );
 		static VDMixRef create() { return std::make_shared<VDMix>(); }
 		//! returns a shared pointer to this fbo
@@ -37,7 +37,7 @@ namespace VideoDromm
 		ci::Area						getBounds();
 		GLuint							getId();
 		//! returns the type
-		FboType							getType() { return mType; };
+		MixType							getType() { return mType; };
 		std::string						getName();
 		//bool							isFlipH() { return mFlipH; };
 		//bool							isFlipV() { return mFlipV; };
@@ -61,7 +61,7 @@ namespace VideoDromm
 		std::string						mName;
 		//bool							mFlipV;
 		//bool							mFlipH;
-		FboType							mType;
+		MixType							mType;
 		std::string						mFbosPath;
 		//bool							mTopDown;
 		int								mWidth;
@@ -83,6 +83,8 @@ namespace VideoDromm
 	private:
 		//! Fbo
 		gl::FboRef						mMixFbo, mLeftFbo, mRightFbo;
+		void							renderLeftFbo();
+		void							renderRightFbo();
 		VDFboList						mFbos;
 		//! Shaders
 		string							mMixShaderName;
