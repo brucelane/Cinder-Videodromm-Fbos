@@ -7,7 +7,7 @@ using namespace ci;
 using namespace ci::app;
 
 namespace VideoDromm {
-	VDMix::VDMix(MixType aType)
+	VDMix::VDMix( MixType aType)
 		: mFbosPath("fbos.xml")
 		, mName("")
 		, mFlipV(false)
@@ -15,6 +15,9 @@ namespace VideoDromm {
 		, mWidth(640)
 		, mHeight(480)
 	{
+		// Settings
+		mVDSettings = VDSettings::create();
+
 
 		if (mName.length() == 0) {
 			mName = mFbosPath;
@@ -241,6 +244,12 @@ namespace VideoDromm {
 		gl::drawColorCube(vec3(0), vec3(2.2f));
 		gl::color(Color::white());
 	}
+	ci::gl::TextureRef VDMix::getRightFboTexture() {
+		return mLeftFbo->getColorTexture();
+	}
+	ci::gl::TextureRef VDMix::getLeftFboTexture() {
+		return mRightFbo->getColorTexture();
+	}
 	ci::gl::TextureRef VDMix::getTexture() {
 		renderLeftFbo();
 		renderRightFbo();
@@ -294,13 +303,14 @@ namespace VideoDromm {
 		mMixShader->uniform("iFps", mVDSettings->iFps);
 		// TODO mMixShader->uniform("iDeltaTime", mVDAnimation->iDeltaTime);
 		// TODO mMixShader->uniform("iTempoTime", mVDAnimation->iTempoTime);
+		mMixShader->uniform("iTempoTime", 1.0f);
 		mMixShader->uniform("iGlitch", (int)mVDSettings->controlValues[45]);
 		mMixShader->uniform("iBeat", mVDSettings->iBeat);
 		mMixShader->uniform("iSeed", mVDSettings->iSeed);
 		mMixShader->uniform("iFlipH", mFlipH);
 		mMixShader->uniform("iFlipV", mFlipV);
 
-		mMixShader->uniform("iTempoTime", mVDSettings->iTempoTime);
+
 		mMixShader->uniform("iTrixels", mVDSettings->controlValues[16]);
 		mMixShader->uniform("iGridSize", mVDSettings->controlValues[17]);
 		mMixShader->uniform("iRedMultiplier", mVDSettings->iRedMultiplier);

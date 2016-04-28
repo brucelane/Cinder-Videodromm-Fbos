@@ -9,6 +9,9 @@
 #include "cinder/Log.h"
 #include "cinder/Timeline.h"
 
+// Settings
+#include "VDSettings.h"
+// Fbos
 #include "VDFbo.h"
 
 #include <atomic>
@@ -39,8 +42,8 @@ namespace VideoDromm
 		//! returns the type
 		MixType							getType() { return mType; };
 		std::string						getName();
-		//bool							isFlipH() { return mFlipH; };
-		//bool							isFlipV() { return mFlipV; };
+		bool							isFlipH() { return mFlipH; };
+		bool							isFlipV() { return mFlipV; };
 		int								getTextureWidth();
 		int								getTextureHeight();
 		//!
@@ -57,10 +60,12 @@ namespace VideoDromm
 		// shader
 		int								loadFboFragmentShader(string aFilePath, bool right);
 		ci::gl::Texture2dRef			getTexture();
+		ci::gl::Texture2dRef			getRightFboTexture();
+		ci::gl::Texture2dRef			getLeftFboTexture();
 	protected:
 		std::string						mName;
-		//bool							mFlipV;
-		//bool							mFlipH;
+		bool							mFlipV;
+		bool							mFlipH;
 		MixType							mType;
 		std::string						mFbosPath;
 		//bool							mTopDown;
@@ -81,6 +86,8 @@ namespace VideoDromm
 		// uniforms
 		vec3							iChannelResolution0;		
 	private:
+		// Settings
+		VDSettingsRef			mVDSettings;
 		//! Fbo
 		gl::FboRef						mMixFbo, mLeftFbo, mRightFbo;
 		void							renderLeftFbo();
