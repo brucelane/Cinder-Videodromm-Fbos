@@ -62,6 +62,7 @@ namespace VideoDromm
 		ci::gl::Texture2dRef			getTexture();
 		ci::gl::Texture2dRef			getRightFboTexture();
 		ci::gl::Texture2dRef			getLeftFboTexture();
+		ci::gl::Texture2dRef			getFboTexture(int index);
 	protected:
 		std::string						mName;
 		bool							mFlipV;
@@ -87,12 +88,13 @@ namespace VideoDromm
 		vec3							iChannelResolution0;		
 	private:
 		// Settings
-		VDSettingsRef			mVDSettings;
+		VDSettingsRef					mVDSettings;
 		//! Fbo
 		gl::FboRef						mMixFbo, mLeftFbo, mRightFbo;
 		void							renderLeftFbo();
 		void							renderRightFbo();
 		VDFboList						mFbos;
+		fs::path						mFbosFilepath;
 		//! Shaders
 		string							mMixShaderName;
 	};

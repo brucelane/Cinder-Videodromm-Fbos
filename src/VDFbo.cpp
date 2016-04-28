@@ -254,7 +254,7 @@ namespace VideoDromm {
 			}
 		}
 		// retrieve shader specific to this fbo
-		string mGlslPath = xml.getAttributeValue<string>("shadername", "");
+		string mGlslPath = xml.getAttributeValue<string>("shadername", "0.glsl");
 		if (mGlslPath.length() > 0) {
 			fs::path fr = getAssetPath("") / mGlslPath;// TODO / mVDSettings->mAssetsPath
 			if (fs::exists(fr)) {

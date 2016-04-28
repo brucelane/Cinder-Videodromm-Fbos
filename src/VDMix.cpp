@@ -7,7 +7,7 @@ using namespace ci;
 using namespace ci::app;
 
 namespace VideoDromm {
-	VDMix::VDMix( MixType aType)
+	VDMix::VDMix(MixType aType)
 		: mFbosPath("fbos.xml")
 		, mName("")
 		, mFlipV(false)
@@ -17,7 +17,14 @@ namespace VideoDromm {
 	{
 		// Settings
 		mVDSettings = VDSettings::create();
-
+		mFbosFilepath = getAssetPath("") / mFbosPath;
+		if (fs::exists(mFbosFilepath)) {
+			// load textures from file if one exists
+			mFbos = VDFbo::readSettings(loadFile(mFbosFilepath));
+		}
+		else {
+			mFbos.push_back(VDFbo::create());
+		}
 
 		if (mName.length() == 0) {
 			mName = mFbosPath;
@@ -88,7 +95,7 @@ namespace VideoDromm {
 	}
 	int VDMix::loadFboFragmentShader(string aFilePath, bool right)
 	{
-		return mFbos[right]->loadPixelFragmentShader(aFilePath);
+		return mFbos[0]->loadPixelFragmentShader(aFilePath);// TODO right or left
 	}
 
 	VDMixList VDMix::readSettings(const DataSourceRef &source)
@@ -120,7 +127,7 @@ namespace VideoDromm {
 					t->fromXml(detailsXml);
 					VDMixlist.push_back(t);
 				}
-				
+
 			}
 		}
 
@@ -183,8 +190,8 @@ namespace VideoDromm {
 
 	}
 	void VDMix::setPosition(int x, int y) {
-		mPosX = ((float)x/(float)mWidth) - 0.5;
-		mPosY = ((float)y/(float)mHeight) - 0.5;
+		mPosX = ((float)x / (float)mWidth) - 0.5;
+		mPosY = ((float)y / (float)mHeight) - 0.5;
 	}
 	void VDMix::setZoom(float aZoom) {
 		mZoom = aZoom;
@@ -249,6 +256,9 @@ namespace VideoDromm {
 	}
 	ci::gl::TextureRef VDMix::getLeftFboTexture() {
 		return mRightFbo->getColorTexture();
+	}
+	ci::gl::Texture2dRef VDMix::getFboTexture(int index) {
+		return mFbos[index]->getTexture();
 	}
 	ci::gl::TextureRef VDMix::getTexture() {
 		renderLeftFbo();
