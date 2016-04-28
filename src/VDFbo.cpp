@@ -20,6 +20,7 @@ namespace VideoDromm {
 		if (mName.length() == 0) {
 			mName = mFilePathOrText;
 		}
+		mType = TEXTURE;
 		mPosX = mPosY = 0.0f;
 		mZoom = 1.0f;
 		// init the fbo whatever happens next
@@ -91,7 +92,7 @@ namespace VideoDromm {
 		try
 		{
 			fs::path fr = aFilePath;
-			string name = "unknown";
+			string name = "unknownshader";
 			string mFile = fr.string();
 			if (mFile.find_last_of("\\") != std::string::npos) name = mFile.substr(mFile.find_last_of("\\") + 1);
 			//mFragFileName = name;

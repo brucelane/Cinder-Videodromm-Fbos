@@ -55,15 +55,14 @@ namespace VideoDromm
 		void							setPosition(int x, int y);
 		void							setZoom(float aZoom);
 		// shader
-		int								loadPixelFragmentShader(string aFilePath);
-		int								setGLSLString(string pixelFrag, string name);
+		int								loadFboFragmentShader(string aFilePath, bool right);
 		ci::gl::Texture2dRef			getTexture();
 	protected:
 		std::string						mName;
 		//bool							mFlipV;
 		//bool							mFlipH;
 		FboType							mType;
-		std::string						mFilePathOrText;
+		std::string						mFbosPath;
 		//bool							mTopDown;
 		int								mWidth;
 		int								mHeight;
@@ -73,9 +72,9 @@ namespace VideoDromm
 		//! default vertex shader
 		std::string						mPassthruVextexShaderString;
 		//! default fragment shader
-		std::string						mFboTextureFragmentShaderString;
-		//! passthru shader
-		gl::GlslProgRef					mFboTextureShader;
+		std::string						mMixFragmentShaderString;
+		//! mix shader
+		gl::GlslProgRef					mMixShader;
 		// include shader lines
 		std::string						shaderInclude;
 		string							mError;
@@ -83,9 +82,9 @@ namespace VideoDromm
 		vec3							iChannelResolution0;		
 	private:
 		//! Fbo
-		gl::FboRef						mFbo;
-		VDTextureList					mTexs;
+		gl::FboRef						mMixFbo, mLeftFbo, mRightFbo;
+		VDFboList						mFbos;
 		//! Shaders
-		string							mShaderName;
+		string							mMixShaderName;
 	};
 }
