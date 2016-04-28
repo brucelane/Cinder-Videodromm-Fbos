@@ -27,8 +27,7 @@ namespace VideoDromm
 
 	class VDFbo: public std::enable_shared_from_this < VDFbo > {
 	public:
-		typedef enum { UNKNOWN, TEXTURE } FboType;
-	public:
+		typedef enum { UNKNOWN, TEXTURE, MIX } FboType;
 		VDFbo( FboType aType = UNKNOWN);
 		~VDFbo( void );
 		static VDFboRef create() { return std::make_shared<VDFbo>(); }
@@ -45,9 +44,9 @@ namespace VideoDromm
 		int								getTextureWidth();
 		int								getTextureHeight();
 		//!
-		virtual void					fromXml(const ci::XmlTree &xml);
+		void							fromXml(const ci::XmlTree &xml);
 		//!
-		virtual XmlTree					toXml() const;
+		XmlTree							toXml() const;
 		//! read a xml file and pass back a vector of VDFbos
 		static VDFboList				readSettings(const ci::DataSourceRef &source);
 		//! write a xml file
@@ -71,8 +70,6 @@ namespace VideoDromm
 		float							mPosX;
 		float							mPosY;
 		float							mZoom;
-		//! Shaders
-		string							mShaderName;
 		//! default vertex shader
 		std::string						mPassthruVextexShaderString;
 		//! default fragment shader
@@ -88,5 +85,7 @@ namespace VideoDromm
 		//! Fbo
 		gl::FboRef						mFbo;
 		VDTextureList					mTexs;
+		//! Shaders
+		string							mShaderName;
 	};
 }

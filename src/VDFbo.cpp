@@ -231,6 +231,7 @@ namespace VideoDromm {
 		xml.setAttribute("filepath", mFilePathOrText);
 		xml.setAttribute("width", mWidth);
 		xml.setAttribute("height", mHeight);
+		xml.setAttribute("shadername", mShaderName);
 
 		return xml;
 	}
@@ -238,7 +239,7 @@ namespace VideoDromm {
 	void VDFbo::fromXml(const XmlTree &xml)
 	{
 		mType = TEXTURE;
-		// retrieve attributes specific to this type of texture
+		// retrieve texture specific to this fbo
 		mFilePathOrText = xml.getAttributeValue<string>("filepath", "");
 		if (mFilePathOrText.length() > 0) {
 			fs::path fullPath = getAssetPath("") / mFilePathOrText;// TODO / mVDSettings->mAssetsPath
@@ -249,6 +250,20 @@ namespace VideoDromm {
 			}
 			catch (Exception &exc) {
 				CI_LOG_EXCEPTION("error loading ", exc);
+			}
+		}
+		// retrieve shader specific to this fbo
+		string mGlslPath = xml.getAttributeValue<string>("shadername", "");
+		if (mGlslPath.length() > 0) {
+			fs::path fr = getAssetPath("") / mGlslPath;// TODO / mVDSettings->mAssetsPath
+			if (fs::exists(fr)) {
+				try {
+					loadPixelFragmentShader(fr.string());
+					CI_LOG_V("successfully loaded " + mGlslPath);
+				}
+				catch (Exception &exc) {
+					CI_LOG_EXCEPTION("error loading ", exc);
+				}
 			}
 		}
 	}
