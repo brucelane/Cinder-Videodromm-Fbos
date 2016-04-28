@@ -310,6 +310,7 @@ namespace VideoDromm {
 		gl::ScopedViewport scpVp(ivec2(0), mFbo->getSize());
 		gl::ScopedGlslProg shaderScp(mFboTextureShader);
 		//mShader->bind();
+		mFboTextureShader->uniform("iGlobalTime", (float)getElapsedSeconds()); //TODO
 		mFboTextureShader->uniform("iResolution", vec3(mWidth, mHeight, 1.0));
 		mFboTextureShader->uniform("iChannelResolution[0]", iChannelResolution0);
 		mFboTextureShader->uniform("iChannel0", 0);
