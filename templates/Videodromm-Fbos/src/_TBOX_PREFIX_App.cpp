@@ -38,7 +38,7 @@ void _TBOX_PREFIX_App::setup()
 	}
 	else {
 		// otherwise create a texture from scratch
-		mFbos.push_back(FboTexture::create());
+		mFbos.push_back(VDFbo::create());
 
 	}
 }
