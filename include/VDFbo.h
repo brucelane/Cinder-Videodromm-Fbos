@@ -30,9 +30,8 @@ namespace VideoDromm
 		typedef enum { UNKNOWN, TEXTURE } FboType;
 	public:
 		VDFbo( FboType aType = UNKNOWN);
-		virtual ~VDFbo( void );
-
-		virtual ci::gl::Texture2dRef	getTexture();
+		~VDFbo( void );
+		static VDFboRef create() { return std::make_shared<VDFbo>(); }
 		//! returns a shared pointer to this fbo
 		VDFboRef						getPtr() { return shared_from_this(); }
 		ci::ivec2						getSize();
@@ -57,9 +56,9 @@ namespace VideoDromm
 		void							setPosition(int x, int y);
 		void							setZoom(float aZoom);
 		// shader
-		int							loadPixelFragmentShader(string aFilePath);
-		int							setGLSLString(string pixelFrag, string name);
-
+		int								loadPixelFragmentShader(string aFilePath);
+		int								setGLSLString(string pixelFrag, string name);
+		ci::gl::Texture2dRef			getTexture();
 	protected:
 		std::string						mName;
 		//bool							mFlipV;
@@ -72,8 +71,6 @@ namespace VideoDromm
 		float							mPosX;
 		float							mPosY;
 		float							mZoom;
-		//! Fbo
-		ci::gl::FboRef					mFbo;
 		//! Shaders
 		string							mShaderName;
 		//! default vertex shader
@@ -86,35 +83,10 @@ namespace VideoDromm
 		std::string						shaderInclude;
 		string							mError;
 		// uniforms
-		vec3							iChannelResolution0;
-	};
-
-
-	// ---- FboTexture ------------------------------------------------
-	typedef std::shared_ptr<class FboTexture>	FboTextureRef;
-
-	class FboTexture
-		: public VDFbo {
-	public:
-		//
-		static FboTextureRef create() { return std::make_shared<FboTexture>(); }
-		//!
-		void				fromXml(const XmlTree &xml) override;
-		//!
-		virtual	XmlTree	toXml() const override;
-
-		FboTexture();
-		virtual ~FboTexture(void);
-
-		//! returns a shared pointer 
-		FboTextureRef	getPtr() { return std::static_pointer_cast<FboTexture>(shared_from_this()); }
-	protected:
-		//! 
-		virtual ci::gl::Texture2dRef	getTexture() override;		
+		vec3							iChannelResolution0;		
 	private:
-		gl::FboRef				mFbo;
-		VDTextureList			mTexs;
-
+		//! Fbo
+		gl::FboRef						mFbo;
+		VDTextureList					mTexs;
 	};
-
 }

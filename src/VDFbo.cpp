@@ -186,13 +186,11 @@ namespace VideoDromm {
 				XmlTree detailsXml = child->getChild("details");
 
 				if (texturetype == "texture") {
-					FboTextureRef t(new FboTexture());
+					VDFboRef t(new VDFbo());
 					t->fromXml(detailsXml);
 					VDFbolist.push_back(t);
 				}
-				else if (texturetype == "shader") {
-
-				}
+				
 			}
 		}
 
@@ -239,7 +237,20 @@ namespace VideoDromm {
 
 	void VDFbo::fromXml(const XmlTree &xml)
 	{
-
+		mType = TEXTURE;
+		// retrieve attributes specific to this type of texture
+		mFilePathOrText = xml.getAttributeValue<string>("filepath", "");
+		if (mFilePathOrText.length() > 0) {
+			fs::path fullPath = getAssetPath("") / mFilePathOrText;// TODO / mVDSettings->mAssetsPath
+			try {
+				mTexs.push_back(TextureImage::create());
+				mTexs[0]->loadImageFromFileFullPath(fullPath.string());
+				CI_LOG_V("successfully loaded " + mFilePathOrText);
+			}
+			catch (Exception &exc) {
+				CI_LOG_EXCEPTION("error loading ", exc);
+			}
+		}
 	}
 	void VDFbo::setPosition(int x, int y) {
 		mPosX = ((float)x/(float)mWidth) - 0.5;
@@ -273,45 +284,6 @@ namespace VideoDromm {
 	}
 
 	ci::gl::TextureRef VDFbo::getTexture() {
-		return mFbo->getColorTexture();
-	}
-	/* 
-	*   child classes
-	*/
-	// FboTexture
-	FboTexture::FboTexture() {
-		// fbo
-		gl::Fbo::Format format;
-		//format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
-		mFbo = gl::Fbo::create(mWidth, mHeight, format.depthTexture());
-
-
-	}
-	void FboTexture::fromXml(const XmlTree &xml)
-	{
-		mType = TEXTURE;
-		// retrieve attributes specific to this type of texture
-		mFilePathOrText = xml.getAttributeValue<string>("filepath", "");
-		if (mFilePathOrText.length() > 0) {
-			fs::path fullPath = getAssetPath("") / mFilePathOrText;// TODO / mVDSettings->mAssetsPath
-			try {
-				mTexs.push_back(TextureImage::create());
-				mTexs[0]->loadImageFromFileFullPath(fullPath.string());
-				CI_LOG_V("successfully loaded " + mFilePathOrText);
-			}
-			catch (Exception &exc) {
-				CI_LOG_EXCEPTION("error loading ", exc);
-			}
-		}
-	}
-	XmlTree	FboTexture::toXml() const {
-		XmlTree xml = VDFbo::toXml();
-
-		// add attributes specific to this type of texture
-		xml.setAttribute("filepath", mFilePathOrText);
-		return xml;
-	}
-	ci::gl::Texture2dRef FboTexture::getTexture() {
 		iChannelResolution0 = vec3(mPosX, mPosY, 0.5);
 		//iChannelResolution0 = vec3(0.1, 0.2, 0.5);
 		//mPosX = 20;
@@ -328,15 +300,6 @@ namespace VideoDromm {
 		mFboTextureShader->uniform("iZoom", mZoom);
 		gl::ScopedTextureBind tex(mTexs[0]->getTexture());
 		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
-
-
-
 		return mFbo->getColorTexture();
 	}
-
-	FboTexture::~FboTexture(void) {
-
-	}
-
-
 } // namespace VideoDromm
