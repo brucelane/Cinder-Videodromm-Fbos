@@ -2,7 +2,8 @@
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 
-#include "VDFbo.h"
+// Mix
+#include "VDMix.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -21,8 +22,8 @@ public:
 	void draw() override;
 	void cleanup() override;
 private:
-	VDFboList					mFbos;
-	fs::path					mFbosFilepath;
+	VDMixList					mMixes;
+	fs::path					mMixesFilepath;
 
 
 };
@@ -30,16 +31,15 @@ private:
 
 void _TBOX_PREFIX_App::setup()
 {
-	// initialize 
-	mFbosFilepath = getAssetPath("") / "fbos.xml";
-	if (fs::exists(mFbosFilepath)) {
+		// initialize 
+	mMixesFilepath = getAssetPath("") / "mixes.xml";
+	if (fs::exists(mMixesFilepath)) {
 		// load textures from file if one exists
-		mFbos = VDFbo::readSettings(loadFile(mFbosFilepath));
+		mMixes = VDMix::readSettings(loadFile(mMixesFilepath));
 	}
 	else {
 		// otherwise create a texture from scratch
-		mFbos.push_back(VDFbo::create());
-
+		mMixes.push_back(VDMix::create());
 	}
 }
 void _TBOX_PREFIX_App::fileDrop(FileDropEvent event)
@@ -60,7 +60,7 @@ void _TBOX_PREFIX_App::fileDrop(FileDropEvent event)
 	}
 	else if (ext == "glsl")
 	{		
-		int rtn = mFbos[0]->loadPixelFragmentShader(mFile);
+		int rtn = mMixes[0]->loadFboFragmentShader(mFile, true);//right = true
 	}
 }
 void _TBOX_PREFIX_App::update()
@@ -70,26 +70,32 @@ void _TBOX_PREFIX_App::update()
 void _TBOX_PREFIX_App::cleanup()
 {
 
-	// save warp settings
-	VDFbo::writeSettings(mFbos, writeFile(mFbosFilepath));
+	// save mix settings
+	VDMix::writeSettings(mMixes, writeFile(mMixesFilepath));
 
 	quit();
 }
 void _TBOX_PREFIX_App::mouseDown(MouseEvent event)
 {
-	mFbos[0]->setZoom((float)event.getX()/640.0f);
+	mMixes[0]->setZoom((float)event.getX() / 640.0f);
+	mMixes[0]->setCrossfade((float)event.getY() / 480.0f);
 
 }
 void _TBOX_PREFIX_App::mouseMove(MouseEvent event)
 {
-	mFbos[0]->setPosition(event.getX(), event.getY());
+	mMixes[0]->setPosition(event.getX(), event.getY());
 
 }
 
 void _TBOX_PREFIX_App::draw()
 {
 	gl::clear( Color( 0, 0, 0 ) ); 
-	gl::draw(mFbos[0]->getTexture());
+	gl::draw(mMixes[0]->getRightFboTexture(), Rectf(0, 0, 128, 128));
+	gl::draw(mMixes[0]->getLeftFboTexture(), Rectf(128, 0, 256, 128));
+	gl::draw(mMixes[0]->getFboTexture(0), Rectf(256, 0, 384, 128));
+	gl::draw(mMixes[0]->getFboTexture(1), Rectf(384, 0, 512, 128));
+	gl::draw(mMixes[0]->getFboInputTexture(0,0), Rectf(0, 128, 128, 256));
+	gl::draw(mMixes[0]->getTexture(), Rectf(128, 128, 256, 256));
 }
 
 
