@@ -308,12 +308,12 @@ namespace VideoDromm {
 		if (aIndex > mTexs.size() - 1) aIndex = mTexs.size() - 1;
 		return mTexs[aIndex]->getTexture();
 	}
-
+	void VDFbo::loadImageFile(string aFile, unsigned int aTextureIndex) {
+		if (aTextureIndex > mTexs.size() - 1) aTextureIndex = mTexs.size() - 1;
+		mTexs[aTextureIndex]->loadImageFromFileFullPath(aFile);
+	}
 	ci::gl::Texture2dRef VDFbo::getTexture() {
 		iChannelResolution0 = vec3(mPosX, mPosY, 0.5);
-		//iChannelResolution0 = vec3(0.1, 0.2, 0.5);
-		//mPosX = 20;
-		//return mTexs[0]->getTexture();
 		gl::ScopedFramebuffer fbScp(mFbo);
 		gl::clear(Color::black());
 		// setup the viewport to match the dimensions of the FBO
@@ -330,3 +330,4 @@ namespace VideoDromm {
 		return mFbo->getColorTexture();
 	}
 } // namespace VideoDromm
+

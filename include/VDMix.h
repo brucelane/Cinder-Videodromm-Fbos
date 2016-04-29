@@ -46,6 +46,8 @@ namespace VideoDromm
 		bool							isFlipV() { return mFlipV; };
 		int								getTextureWidth();
 		int								getTextureHeight();
+		// textures
+		void							loadImageFile(string aFile, unsigned int aFboIndex, unsigned int aTextureIndex, bool right);
 		//!
 		void							fromXml(const ci::XmlTree &xml);
 		//!

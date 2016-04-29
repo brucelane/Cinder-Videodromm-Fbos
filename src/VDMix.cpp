@@ -263,6 +263,12 @@ namespace VideoDromm {
 	ci::gl::TextureRef VDMix::getLeftFboTexture() {
 		return mRightFbo->getColorTexture();
 	}
+	void VDMix::loadImageFile(string aFile, unsigned int aFboIndex, unsigned int aTextureIndex, bool right) {
+		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
+		mFbos[aFboIndex]->loadImageFile(aFile, aTextureIndex);
+		
+	}
+
 	ci::gl::Texture2dRef VDMix::getFboTexture(unsigned int aFboIndex) {
 		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
 		return mFbos[aFboIndex]->getTexture();

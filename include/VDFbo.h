@@ -60,6 +60,7 @@ namespace VideoDromm
 		// textures
 		ci::gl::Texture2dRef			getInputTexture(unsigned int aIndex);
 		ci::gl::Texture2dRef			getTexture();
+		void							loadImageFile(string aFile, unsigned int aTextureIndex);
 	protected:
 		std::string						mFboName;
 		//bool							mFlipV;
