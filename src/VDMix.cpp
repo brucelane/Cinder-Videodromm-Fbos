@@ -192,9 +192,17 @@ namespace VideoDromm {
 	void VDMix::setPosition(int x, int y) {
 		mPosX = ((float)x / (float)mWidth) - 0.5;
 		mPosY = ((float)y / (float)mHeight) - 0.5;
+		for (auto &fbo : mFbos)
+		{
+			fbo->setPosition(mPosX, mPosY);
+		}
 	}
 	void VDMix::setZoom(float aZoom) {
 		mZoom = aZoom;
+		for (auto &fbo : mFbos)
+		{
+			fbo->setZoom(mZoom);
+		}
 	}
 	int VDMix::getTextureWidth() {
 		return mWidth;
@@ -229,11 +237,10 @@ namespace VideoDromm {
 		// setup the viewport to match the dimensions of the FBO
 		gl::ScopedViewport scpVp(ivec2(30), mLeftFbo->getSize());
 
-		// render the color cube
-		gl::ScopedGlslProg shaderScp(gl::getStockShader(gl::ShaderDef().color()));
-		gl::color(Color(1.0f, 0.5f, 0.25f));
-		gl::drawColorCube(vec3(0), vec3(2.2f));
-		gl::color(Color::white());
+		// render the left fbo
+		gl::ScopedGlslProg shaderScp(gl::getStockShader(gl::ShaderDef().texture()));
+		gl::ScopedTextureBind tex(mFbos[0]->getTexture());
+		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
 	}
 	// Render left FBO
 	void VDMix::renderRightFbo()
@@ -245,11 +252,10 @@ namespace VideoDromm {
 		// setup the viewport to match the dimensions of the FBO
 		gl::ScopedViewport scpVp(ivec2(30), mRightFbo->getSize());
 
-		// render the color cube
-		gl::ScopedGlslProg shaderScp(gl::getStockShader(gl::ShaderDef().color()));
-		gl::color(Color(1.0f, 0.5f, 0.25f));
-		gl::drawColorCube(vec3(0), vec3(2.2f));
-		gl::color(Color::white());
+		// render the right fbo
+		gl::ScopedGlslProg shaderScp(gl::getStockShader(gl::ShaderDef().texture()));
+		gl::ScopedTextureBind tex(mFbos[1]->getTexture());
+		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
 	}
 	ci::gl::TextureRef VDMix::getRightFboTexture() {
 		return mLeftFbo->getColorTexture();
@@ -257,17 +263,25 @@ namespace VideoDromm {
 	ci::gl::TextureRef VDMix::getLeftFboTexture() {
 		return mRightFbo->getColorTexture();
 	}
-	ci::gl::Texture2dRef VDMix::getFboTexture(int index) {
-		return mFbos[index]->getTexture();
+	ci::gl::Texture2dRef VDMix::getFboTexture(unsigned int aFboIndex) {
+		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
+		return mFbos[aFboIndex]->getTexture();
+	}
+	ci::gl::Texture2dRef VDMix::getFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex) {
+		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
+		return mFbos[aFboIndex]->getInputTexture(aFboInputTextureIndex);
+	}
+	void VDMix::setCrossfade(float aCrossfade) {
+		mVDSettings->controlValues[21] = aCrossfade;
 	}
 	ci::gl::TextureRef VDMix::getTexture() {
 		renderLeftFbo();
 		renderRightFbo();
 		iChannelResolution0 = vec3(mPosX, mPosY, 0.5);
 		gl::ScopedFramebuffer fbScp(mMixFbo);
-		gl::clear(Color::black());
+		gl::clear(Color::white());
 		// setup the viewport to match the dimensions of the FBO
-		gl::ScopedViewport scpVp(ivec2(100), mMixFbo->getSize());
+		gl::ScopedViewport scpVp(ivec2(5), mMixFbo->getSize());
 		gl::ScopedGlslProg shaderScp(mMixShader);
 		mLeftFbo->bindTexture();
 		mRightFbo->bindTexture();

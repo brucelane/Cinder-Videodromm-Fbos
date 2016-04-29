@@ -62,7 +62,11 @@ namespace VideoDromm
 		ci::gl::Texture2dRef			getTexture();
 		ci::gl::Texture2dRef			getRightFboTexture();
 		ci::gl::Texture2dRef			getLeftFboTexture();
-		ci::gl::Texture2dRef			getFboTexture(int index);
+		ci::gl::Texture2dRef			getFboTexture(unsigned int aFboIndex);
+		ci::gl::Texture2dRef			getFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex);
+		// uniforms
+		void							setCrossfade(float aCrossfade);
+
 	protected:
 		std::string						mName;
 		bool							mFlipV;

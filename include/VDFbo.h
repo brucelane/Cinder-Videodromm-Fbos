@@ -57,9 +57,11 @@ namespace VideoDromm
 		// shader
 		int								loadPixelFragmentShader(string aFilePath);
 		int								setGLSLString(string pixelFrag, string name);
+		// textures
+		ci::gl::Texture2dRef			getInputTexture(unsigned int aIndex);
 		ci::gl::Texture2dRef			getTexture();
 	protected:
-		std::string						mName;
+		std::string						mFboName;
 		//bool							mFlipV;
 		//bool							mFlipH;
 		FboType							mType;

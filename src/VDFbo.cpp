@@ -9,17 +9,13 @@ using namespace ci::app;
 namespace VideoDromm {
 	VDFbo::VDFbo(FboType aType)
 		: mFilePathOrText("")
-		, mName("")
+		, mFboName("fbo")
 		/*, mTopDown(true)
 		, mFlipV(false)
 		, mFlipH(true)*/
 		, mWidth(640)
 		, mHeight(480)
 	{
-
-		if (mName.length() == 0) {
-			mName = mFilePathOrText;
-		}
 		mType = TEXTURE;
 		mPosX = mPosY = 0.0f;
 		mZoom = 1.0f;
@@ -173,8 +169,6 @@ namespace VideoDromm {
 
 		// check if this is a valid file 
 		bool isOK = doc.hasChild("fbos");
-		if (!isOK) return VDFbolist;
-
 		//
 		if (isOK) {
 
@@ -191,10 +185,21 @@ namespace VideoDromm {
 					t->fromXml(detailsXml);
 					VDFbolist.push_back(t);
 				}
-				
 			}
 		}
-
+		else {
+			// malformed XML
+			CI_LOG_V("malformed XML");
+			VDFboRef t(new VDFbo());
+			XmlTree		initXml;
+			initXml.setTag("details");
+			initXml.setAttribute("filepath", "0.jpg");
+			initXml.setAttribute("width", 640);
+			initXml.setAttribute("height", 480);
+			initXml.setAttribute("shadername", "0.glsl");
+			t->fromXml(initXml);
+			VDFbolist.push_back(t);
+		}
 		return VDFbolist;
 	}
 
@@ -241,18 +246,18 @@ namespace VideoDromm {
 	{
 		mType = TEXTURE;
 		// retrieve texture specific to this fbo
-		mFilePathOrText = xml.getAttributeValue<string>("filepath", "");
-		if (mFilePathOrText.length() > 0) {
-			fs::path fullPath = getAssetPath("") / mFilePathOrText;// TODO / mVDSettings->mAssetsPath
-			try {
-				mTexs.push_back(TextureImage::create());
-				mTexs[0]->loadImageFromFileFullPath(fullPath.string());
-				CI_LOG_V("successfully loaded " + mFilePathOrText);
-			}
-			catch (Exception &exc) {
-				CI_LOG_EXCEPTION("error loading ", exc);
-			}
+		mFilePathOrText = xml.getAttributeValue<string>("filepath", "0.jpg");
+
+		fs::path fullPath = getAssetPath("") / mFilePathOrText;// TODO / mVDSettings->mAssetsPath
+		try {
+			mTexs.push_back(TextureImage::create());
+			mTexs[0]->loadImageFromFileFullPath(fullPath.string());
+			CI_LOG_V("successfully loaded " + mFilePathOrText);
 		}
+		catch (Exception &exc) {
+			CI_LOG_EXCEPTION("error loading ", exc);
+		}
+
 		// retrieve shader specific to this fbo
 		string mGlslPath = xml.getAttributeValue<string>("shadername", "0.glsl");
 		if (mGlslPath.length() > 0) {
@@ -269,8 +274,8 @@ namespace VideoDromm {
 		}
 	}
 	void VDFbo::setPosition(int x, int y) {
-		mPosX = ((float)x/(float)mWidth) - 0.5;
-		mPosY = ((float)y/(float)mHeight) - 0.5;
+		mPosX = ((float)x / (float)mWidth) - 0.5;
+		mPosY = ((float)y / (float)mHeight) - 0.5;
 	}
 	void VDFbo::setZoom(float aZoom) {
 		mZoom = aZoom;
@@ -296,10 +301,15 @@ namespace VideoDromm {
 	}
 
 	std::string VDFbo::getName(){
-		return mName;
+		return mFboName;
 	}
 
-	ci::gl::TextureRef VDFbo::getTexture() {
+	ci::gl::Texture2dRef VDFbo::getInputTexture(unsigned int aIndex) {
+		if (aIndex > mTexs.size() - 1) aIndex = mTexs.size() - 1;
+		return mTexs[aIndex]->getTexture();
+	}
+
+	ci::gl::Texture2dRef VDFbo::getTexture() {
 		iChannelResolution0 = vec3(mPosX, mPosY, 0.5);
 		//iChannelResolution0 = vec3(0.1, 0.2, 0.5);
 		//mPosX = 20;
