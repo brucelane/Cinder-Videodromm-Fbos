@@ -59,6 +59,7 @@ namespace VideoDromm
 		int								setGLSLString(string pixelFrag, string name);
 		// textures
 		ci::gl::Texture2dRef			getInputTexture(unsigned int aIndex);
+		unsigned int					getInputTexturesCount() { return mTexs.size(); };
 		ci::gl::Texture2dRef			getTexture();
 		void							loadImageFile(string aFile, unsigned int aTextureIndex);
 	protected:
