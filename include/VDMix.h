@@ -28,11 +28,11 @@ namespace VideoDromm
 	typedef std::shared_ptr<class VDMix> 	VDMixRef;
 	typedef std::vector<VDMixRef>			VDMixList;
 
-	class VDMix: public std::enable_shared_from_this < VDMix > {
+	class VDMix : public std::enable_shared_from_this < VDMix > {
 	public:
 		typedef enum { MIX } MixType;
 		VDMix(MixType aType = MIX);
-		~VDMix( void );
+		~VDMix(void);
 		static VDMixRef create() { return std::make_shared<VDMix>(); }
 		//! returns a shared pointer to this fbo
 		VDMixRef						getPtr() { return shared_from_this(); }
@@ -70,6 +70,7 @@ namespace VideoDromm
 		int								getFboTextureWidth(unsigned int aFboIndex);
 		int								getFboTextureHeight(unsigned int aFboIndex);
 		unsigned int					getInputTexturesCount(unsigned int aFboIndex);
+		string							getInputTextureName(unsigned int aFboIndex, unsigned int aTextureIndex);
 		// uniforms
 		void							setCrossfade(float aCrossfade);
 	protected:
@@ -94,7 +95,7 @@ namespace VideoDromm
 		std::string						shaderInclude;
 		string							mError;
 		// uniforms
-		vec3							iChannelResolution0;		
+		vec3							iChannelResolution0;
 	private:
 		// Settings
 		VDSettingsRef					mVDSettings;

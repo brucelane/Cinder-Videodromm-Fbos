@@ -25,11 +25,11 @@ namespace VideoDromm
 	typedef std::shared_ptr<class VDFbo> 	VDFboRef;
 	typedef std::vector<VDFboRef>			VDFboList;
 
-	class VDFbo: public std::enable_shared_from_this < VDFbo > {
+	class VDFbo : public std::enable_shared_from_this < VDFbo > {
 	public:
 		typedef enum { UNKNOWN, TEXTURE, MIX } FboType;
-		VDFbo( FboType aType = UNKNOWN);
-		~VDFbo( void );
+		VDFbo(FboType aType = UNKNOWN);
+		~VDFbo(void);
 		static VDFboRef create() { return std::make_shared<VDFbo>(); }
 		//! returns a shared pointer to this fbo
 		VDFboRef						getPtr() { return shared_from_this(); }
@@ -60,6 +60,7 @@ namespace VideoDromm
 		// textures
 		ci::gl::Texture2dRef			getInputTexture(unsigned int aIndex);
 		unsigned int					getInputTexturesCount() { return mTexs.size(); };
+		string							getInputTextureName(unsigned int aTextureIndex);
 		ci::gl::Texture2dRef			getTexture();
 		void							loadImageFile(string aFile, unsigned int aTextureIndex);
 	protected:
@@ -84,7 +85,7 @@ namespace VideoDromm
 		std::string						shaderInclude;
 		string							mError;
 		// uniforms
-		vec3							iChannelResolution0;		
+		vec3							iChannelResolution0;
 	private:
 		//! Fbo
 		gl::FboRef						mFbo;
