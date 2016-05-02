@@ -10,8 +10,8 @@ namespace VideoDromm {
 	VDMix::VDMix(MixType aType)
 		: mFbosPath("fbos.xml")
 		, mName("")
-		, mFlipV(false)
-		, mFlipH(false)
+		, mFlipV(true)
+		, mFlipH(true)
 		, mWidth(640)
 		, mHeight(480)
 	{
