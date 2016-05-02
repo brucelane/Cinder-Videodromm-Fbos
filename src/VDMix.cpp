@@ -10,8 +10,8 @@ namespace VideoDromm {
 	VDMix::VDMix(MixType aType)
 		: mFbosPath("fbos.xml")
 		, mName("")
-		, mFlipV(true)
-		, mFlipH(true)
+		, mFlipV(false)
+		, mFlipH(false)
 		, mWidth(640)
 		, mHeight(480)
 	{
@@ -219,6 +219,10 @@ namespace VideoDromm {
 		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
 		return mFbos[aFboIndex]->getInputTextureName(aTextureIndex);
 	}
+	string VDMix::getFboName(unsigned int aFboIndex) {
+		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
+		return mFbos[aFboIndex]->getName();
+	}
 	int VDMix::getFboTextureWidth(unsigned int aFboIndex) {
 		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
 		return mFbos[aFboIndex]->getTextureWidth();
@@ -271,7 +275,15 @@ namespace VideoDromm {
 
 		// render the right fbo
 		gl::ScopedGlslProg shaderScp(gl::getStockShader(gl::ShaderDef().texture()));
-		gl::ScopedTextureBind tex(mFbos[1]->getTexture());
+		if (mFbos.size() > 1) {
+			gl::ScopedTextureBind tex(mFbos[1]->getTexture());
+
+		}
+		else {
+			CI_LOG_W("renderRightFbo: only one fbo, right renders left...");
+			gl::ScopedTextureBind tex(mFbos[0]->getTexture());
+
+		}
 		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
 	}
 	ci::gl::TextureRef VDMix::getRightFboTexture() {
