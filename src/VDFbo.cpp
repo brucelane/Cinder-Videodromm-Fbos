@@ -7,7 +7,7 @@ using namespace ci;
 using namespace ci::app;
 
 namespace VideoDromm {
-	VDFbo::VDFbo(FboType aType)
+	VDFbo::VDFbo(TextureType aType)
 		: mFilePathOrText("")
 		, mFboName("fbo")
 		/*, mTopDown(true)
@@ -16,7 +16,7 @@ namespace VideoDromm {
 		, mWidth(640)
 		, mHeight(480)
 	{
-		mType = TEXTURE;
+		mType = aType;
 		mPosX = mPosY = 0.0f;
 		mZoom = 1.0f;
 		// init the fbo whatever happens next
@@ -178,14 +178,73 @@ namespace VideoDromm {
 			// iterate textures
 			for (XmlTree::ConstIter child = fboXml.begin("fbo"); child != fboXml.end(); ++child) {
 				// create fbo of the correct type
-				std::string texturetype = child->getAttributeValue<std::string>("fbotype", "unknown");
+				std::string texturetype = child->getAttributeValue<std::string>("texturetype", "unknown");
 				XmlTree detailsXml = child->getChild("details");
 
-				if (texturetype == "texture") {
+				// arg
+				mTexs.push_back(TextureImage::create());
+				mTexs[0]->loadImageFromFileFullPath(fullPath.string());
+
+				// duplicate from VDTexture.cpp TODO
+				if (texturetype == "image") {
+					TextureImageRef t(new TextureImage());
+					t->fromXml(detailsXml);
+					vdtexturelist.push_back(t);
+				}
+				else if (texturetype == "imagesequence") {
+					TextureImageSequenceRef t(new TextureImageSequence());
+					t->fromXml(detailsXml);
+					vdtexturelist.push_back(t);
+				}
+				else if (texturetype == "movie") {
+					TextureMovieRef t(new TextureMovie());
+					t->fromXml(detailsXml);
+					vdtexturelist.push_back(t);
+				}
+				else if (texturetype == "camera") {
+#if (defined(  CINDER_MSW) ) || (defined( CINDER_MAC ))
+					TextureCameraRef t(new TextureCamera());
+					t->fromXml(detailsXml);
+					vdtexturelist.push_back(t);
+#else
+					// camera not supported on this platform
+					CI_LOG_V("camera not supported on this platform");
+					XmlTree		xml;
+					xml.setTag("details");
+					xml.setAttribute("path", "0.jpg");
+					xml.setAttribute("width", 640);
+					xml.setAttribute("height", 480);
+					t->fromXml(xml);
+					vdtexturelist.push_back(t);
+#endif
+				}
+				else if (texturetype == "shared") {
+					TextureSharedRef t(new TextureShared());
+					t->fromXml(detailsXml);
+					vdtexturelist.push_back(t);
+				}
+				else if (texturetype == "audio") {
+					TextureAudioRef t(new TextureAudio());
+					t->fromXml(detailsXml);
+					vdtexturelist.push_back(t);
+				}
+				else {
+					// unknown texture type
+					CI_LOG_V("unknown texture type");
+					TextureImageRef t(new TextureImage());
+					XmlTree		xml;
+					xml.setTag("details");
+					xml.setAttribute("path", "0.jpg");
+					xml.setAttribute("width", 640);
+					xml.setAttribute("height", 480);
+					t->fromXml(xml);
+					vdtexturelist.push_back(t);
+				}
+				// finally create the fbo
 					VDFboRef t(new VDFbo());
 					t->fromXml(detailsXml);
 					VDFbolist.push_back(t);
-				}
+				
 			}
 		}
 		else {
@@ -194,7 +253,7 @@ namespace VideoDromm {
 			VDFboRef t(new VDFbo());
 			XmlTree		initXml;
 			initXml.setTag("details");
-			initXml.setAttribute("filepath", "0.jpg");
+			initXml.setAttribute("path", "0.jpg");
 			initXml.setAttribute("width", 640);
 			initXml.setAttribute("height", 480);
 			initXml.setAttribute("shadername", "0.glsl");
@@ -218,8 +277,8 @@ namespace VideoDromm {
 			fbo.setTag("fbo");
 			fbo.setAttribute("id", i + 1);
 			switch (VDFbolist[i]->mType) {
-			case TEXTURE: fbo.setAttribute("fbotype", "texture"); break;
-			default: fbo.setAttribute("fbotype", "unknown"); break;
+			case IMAGE: fbo.setAttribute("texturetype", "image"); break;
+			default: fbo.setAttribute("texturetype", "unknown"); break;
 			}
 			// details specific to texture type
 			fbo.push_back(VDFbolist[i]->toXml());
@@ -235,7 +294,7 @@ namespace VideoDromm {
 	{
 		XmlTree		xml;
 		xml.setTag("details");
-		xml.setAttribute("filepath", mFilePathOrText);
+		xml.setAttribute("path", mFilePathOrText);
 		xml.setAttribute("width", mWidth);
 		xml.setAttribute("height", mHeight);
 		xml.setAttribute("shadername", mShaderName);
@@ -245,9 +304,9 @@ namespace VideoDromm {
 
 	void VDFbo::fromXml(const XmlTree &xml)
 	{
-		mType = TEXTURE;
+		/*mType = IMAGE;
 		// retrieve texture specific to this fbo
-		mFilePathOrText = xml.getAttributeValue<string>("filepath", "0.jpg");
+		mFilePathOrText = xml.getAttributeValue<string>("path", "0.jpg");
 
 		fs::path fullPath = getAssetPath("") / mFilePathOrText;// TODO / mVDSettings->mAssetsPath
 		try {
@@ -257,7 +316,7 @@ namespace VideoDromm {
 		}
 		catch (Exception &exc) {
 			CI_LOG_EXCEPTION("error loading ", exc);
-		}
+		}*/
 
 		// retrieve shader specific to this fbo
 		string mGlslPath = xml.getAttributeValue<string>("shadername", "0.glsl");

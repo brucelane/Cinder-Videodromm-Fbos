@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <fbos version="1.0">
-	<fbo id="1" fbotype="texture">
+	<fbo id="1" texturetype="image">
 		<details path="0.jpg" width="640" height="480" shadername="10.glsl"/>
 	</fbo>
-	<fbo id="2" fbotype="texture">
-		<details path="help.jpg" width="640" height="480" shadername="13.glsl"/>
+	<fbo id="2" texturetype="imagesequence">
+		<details path="mandalas" width="640" height="480" shadername="13.glsl"/>
 	</fbo>
 </fbos>
