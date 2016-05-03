@@ -18,14 +18,11 @@ namespace VideoDromm {
 		// Settings
 		mVDSettings = VDSettings::create();
 		mFbosFilepath = getAssetPath("") / mFbosPath;
+		mFbos.push_back(VDFbo::create());
 		if (fs::exists(mFbosFilepath)) {
 			// load textures from file if one exists
-			mFbos = VDFbo::readSettings(loadFile(mFbosFilepath));
+			mFbos[mFbos.size() - 1]->readSettings(loadFile(mFbosFilepath));
 		}
-		else {
-			mFbos.push_back(VDFbo::create());
-		}
-
 		if (mName.length() == 0) {
 			mName = mFbosPath;
 		}
@@ -175,16 +172,20 @@ namespace VideoDromm {
 	void VDMix::fromXml(const XmlTree &xml)
 	{
 		mType = MIX;
+		// init at least one fbo
+		if (mFbos.size() == 0) mFbos.push_back(VDFbo::create());
 		// retrieve fbos specific to this mixfbo
 		mFbosPath = xml.getAttributeValue<string>("fbopath", "fbos.xml");
 		if (mFbosPath.length() > 0) {
 			fs::path fboSettingsPath = getAssetPath("") / mFbosPath;// TODO / mVDSettings->mAssetsPath
-			try {
-				VDFbo::readSettings(loadFile(fboSettingsPath));
-				CI_LOG_V("successfully loaded " + mFbosPath);
-			}
-			catch (Exception &exc) {
-				CI_LOG_EXCEPTION("error loading ", exc);
+			if (fs::exists(mFbosFilepath)) {
+				try {
+					mFbos[mFbos.size() - 1]->readSettings(loadFile(fboSettingsPath));
+					CI_LOG_V("successfully loaded " + mFbosPath);
+				}
+				catch (Exception &exc) {
+					CI_LOG_EXCEPTION("error loading ", exc);
+				}
 			}
 		}
 

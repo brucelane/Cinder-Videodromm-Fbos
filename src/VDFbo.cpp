@@ -181,31 +181,27 @@ namespace VideoDromm {
 				std::string texturetype = child->getAttributeValue<std::string>("texturetype", "unknown");
 				XmlTree detailsXml = child->getChild("details");
 
-				// arg
-				mTexs.push_back(TextureImage::create());
-				mTexs[0]->loadImageFromFileFullPath(fullPath.string());
-
 				// duplicate from VDTexture.cpp TODO
 				if (texturetype == "image") {
 					TextureImageRef t(new TextureImage());
 					t->fromXml(detailsXml);
-					vdtexturelist.push_back(t);
+					mTexs.push_back(t);
 				}
 				else if (texturetype == "imagesequence") {
 					TextureImageSequenceRef t(new TextureImageSequence());
 					t->fromXml(detailsXml);
-					vdtexturelist.push_back(t);
+					mTexs.push_back(t);
 				}
 				else if (texturetype == "movie") {
 					TextureMovieRef t(new TextureMovie());
 					t->fromXml(detailsXml);
-					vdtexturelist.push_back(t);
+					mTexs.push_back(t);
 				}
 				else if (texturetype == "camera") {
 #if (defined(  CINDER_MSW) ) || (defined( CINDER_MAC ))
 					TextureCameraRef t(new TextureCamera());
 					t->fromXml(detailsXml);
-					vdtexturelist.push_back(t);
+					mTexs.push_back(t);
 #else
 					// camera not supported on this platform
 					CI_LOG_V("camera not supported on this platform");
@@ -215,18 +211,18 @@ namespace VideoDromm {
 					xml.setAttribute("width", 640);
 					xml.setAttribute("height", 480);
 					t->fromXml(xml);
-					vdtexturelist.push_back(t);
+					mTexs.push_back(t);
 #endif
 				}
 				else if (texturetype == "shared") {
 					TextureSharedRef t(new TextureShared());
 					t->fromXml(detailsXml);
-					vdtexturelist.push_back(t);
+					mTexs.push_back(t);
 				}
 				else if (texturetype == "audio") {
 					TextureAudioRef t(new TextureAudio());
 					t->fromXml(detailsXml);
-					vdtexturelist.push_back(t);
+					mTexs.push_back(t);
 				}
 				else {
 					// unknown texture type
@@ -238,13 +234,13 @@ namespace VideoDromm {
 					xml.setAttribute("width", 640);
 					xml.setAttribute("height", 480);
 					t->fromXml(xml);
-					vdtexturelist.push_back(t);
+					mTexs.push_back(t);
 				}
 				// finally create the fbo
-					VDFboRef t(new VDFbo());
-					t->fromXml(detailsXml);
-					VDFbolist.push_back(t);
-				
+				VDFboRef t(new VDFbo());
+				t->fromXml(detailsXml);
+				VDFbolist.push_back(t);
+
 			}
 		}
 		else {
@@ -310,12 +306,12 @@ namespace VideoDromm {
 
 		fs::path fullPath = getAssetPath("") / mFilePathOrText;// TODO / mVDSettings->mAssetsPath
 		try {
-			mTexs.push_back(TextureImage::create());
-			mTexs[0]->loadImageFromFileFullPath(fullPath.string());
-			CI_LOG_V("successfully loaded " + mFilePathOrText);
+		mTexs.push_back(TextureImage::create());
+		mTexs[0]->loadImageFromFileFullPath(fullPath.string());
+		CI_LOG_V("successfully loaded " + mFilePathOrText);
 		}
 		catch (Exception &exc) {
-			CI_LOG_EXCEPTION("error loading ", exc);
+		CI_LOG_EXCEPTION("error loading ", exc);
 		}*/
 
 		// retrieve shader specific to this fbo
@@ -368,9 +364,9 @@ namespace VideoDromm {
 		if (aIndex > mTexs.size() - 1) aIndex = mTexs.size() - 1;
 		return mTexs[aIndex]->getTexture();
 	}
-	string VDFbo::getInputTextureName(unsigned int aTextureIndex) { 
+	string VDFbo::getInputTextureName(unsigned int aTextureIndex) {
 		if (aTextureIndex > mTexs.size() - 1) aTextureIndex = mTexs.size() - 1;
-		return mTexs[aTextureIndex]->getName(); 
+		return mTexs[aTextureIndex]->getName();
 	}
 
 	void VDFbo::loadImageFile(string aFile, unsigned int aTextureIndex) {
