@@ -371,7 +371,7 @@ namespace VideoDromm {
 
 	void VDFbo::loadImageFile(string aFile, unsigned int aTextureIndex) {
 		if (aTextureIndex > mTexs.size() - 1) aTextureIndex = mTexs.size() - 1;
-		mTexs[aTextureIndex]->loadImageFromFileFullPath(aFile);
+		mTexs[aTextureIndex]->loadFromFullPath(aFile);
 	}
 	ci::gl::Texture2dRef VDFbo::getTexture() {
 		iChannelResolution0 = vec3(mPosX, mPosY, 0.5);
