@@ -24,8 +24,6 @@ public:
 private:
 	VDMixList					mMixes;
 	fs::path					mMixesFilepath;
-
-
 };
 
 
@@ -45,22 +43,25 @@ void _TBOX_PREFIX_App::setup()
 void _TBOX_PREFIX_App::fileDrop(FileDropEvent event)
 {
 	int index = 1;
+	bool right = true;
 	string ext = "";
 	// use the last of the dropped files
 	fs::path mPath = event.getFile(event.getNumFiles() - 1);
 	string mFile = mPath.string();
 	int dotIndex = mFile.find_last_of(".");
 	int slashIndex = mFile.find_last_of("\\");
+	// determine right or left from x position
+	right = ((float)event.getX() / getWindowWidth() > 0.5);
 
 	if (dotIndex != std::string::npos && dotIndex > slashIndex) ext = mFile.substr(mFile.find_last_of(".") + 1);
 
 	if (ext == "png" || ext == "jpg")
 	{
-		//mFbos[0]->loadImageFile(index, mFile);
+		mMixes[0]->loadImageFile(mFile, index, 0, right);
 	}
 	else if (ext == "glsl")
 	{		
-		int rtn = mMixes[0]->loadFboFragmentShader(mFile, true);//right = true
+		int rtn = mMixes[0]->loadFboFragmentShader(mFile, right);//right = true
 	}
 }
 void _TBOX_PREFIX_App::update()
