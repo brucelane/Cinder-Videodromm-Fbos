@@ -102,7 +102,7 @@ namespace VideoDromm
 		void							renderLeftFbo();
 		void							renderRightFbo();
 		// maintain a list of fbo for right only or left/right or more fbos specific to this mix
-		static VDFboList				mFboList;
+		VDFboList						mFboList;
 		fs::path						mFbosFilepath;
 		//! Shaders
 		string							mMixShaderName;

@@ -10,7 +10,7 @@
 	<asset>assets/mixfbo.frag</asset>
 	<asset>assets/fbotexture.frag</asset>
 	<asset>assets/shadertoy.inc</asset>
-	<asset>assets/fbos.xml</asset>	
+	<asset>assets/fbo.xml</asset>	
 	<asset>assets/mixes.xml</asset>
 	<asset>assets/fbos.json</asset>
 </template>

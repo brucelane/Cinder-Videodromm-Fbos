@@ -159,112 +159,36 @@ namespace VideoDromm {
 		}
 		return foundIndex;
 	}
-	VDFboList VDFbo::readSettings(const DataSourceRef &source)
+	/*VDFboList VDFbo::readSettings(const DataSourceRef &source)
 	{
 		XmlTree			doc;
 		VDFboList		mFbolist;
-
+		//mTextureList = VDTexture::readSettings(source);
 		CI_LOG_V("VDFbo readSettings");
 		// try to load the specified xml file
 		try { doc = XmlTree(source); }
 		catch (...) { return mFbolist; }
 
 		// check if this is a valid file 
-		bool isOK = doc.hasChild("fbos");
-		//
+		bool isOK = doc.hasChild("fbo");
 		if (isOK) {
 
-			XmlTree fboXml = doc.getChild("fbos");
-
-			// iterate textures
-			for (XmlTree::ConstIter child = fboXml.begin("texture"); child != fboXml.end(); ++child) {
-				// create fbo of the correct type
-				std::string texturetype = child->getAttributeValue<std::string>("texturetype", "unknown");
-				XmlTree detailsXml = child->getChild("details");
-				/* useless done in fromxml string shaderToLoad = detailsXml.getAttributeValue<string>("shadername", "");
-				fs::path shaderFullPath = getAssetPath("") / shaderToLoad;
-				loadPixelFragmentShader(shaderFullPath.string());*/
-				// duplicate from VDTexture.cpp TODO
-				if (texturetype == "image") {
-					TextureImageRef t( TextureImage::create());
-					t->fromXml(detailsXml);
-					mTextureList.push_back(t);
-				}
-				else if (texturetype == "imagesequence") {
-					TextureImageSequenceRef t(new TextureImageSequence());
-					t->fromXml(detailsXml);
-					mTextureList.push_back(t);
-				}
-				else if (texturetype == "movie") {
-					TextureMovieRef t(new TextureMovie());
-					t->fromXml(detailsXml);
-					mTextureList.push_back(t);
-				}
-				else if (texturetype == "camera") {
-#if (defined(  CINDER_MSW) ) || (defined( CINDER_MAC ))
-					TextureCameraRef t(new TextureCamera());
-					t->fromXml(detailsXml);
-					mTextureList.push_back(t);
-#else
-					// camera not supported on this platform
-					CI_LOG_V("camera not supported on this platform");
-					XmlTree		xml;
-					xml.setTag("details");
-					xml.setAttribute("path", "0.jpg");
-					xml.setAttribute("width", 640);
-					xml.setAttribute("height", 480);
-					t->fromXml(xml);
-					mTextureList.push_back(t);
-#endif
-				}
-				else if (texturetype == "shared") {
-					TextureSharedRef t(new TextureShared());
-					t->fromXml(detailsXml);
-					mTextureList.push_back(t);
-				}
-				else if (texturetype == "audio") {
-					TextureAudioRef t(new TextureAudio());
-					t->fromXml(detailsXml);
-					mTextureList.push_back(t);
-				}
-				else {
-					// unknown texture type
-					CI_LOG_V("unknown texture type");
-					TextureImageRef t(new TextureImage());
-					XmlTree		xml;
-					xml.setTag("details");
-					xml.setAttribute("path", "0.jpg");
-					xml.setAttribute("width", 640);
-					xml.setAttribute("height", 480);
-					t->fromXml(xml);
-					mTextureList.push_back(t);
-				}
-				// finally create the fbo
+			XmlTree fboXml = doc.getChild("fbo");
 				VDFboRef t(new VDFbo());
 				t->fromXml(detailsXml);
 				mFbolist.push_back(t);
+
+			// iterate textures
+			for (XmlTree::ConstIter child = fboXml.begin("texture"); child != fboXml.end(); ++child) {
+				// create fbo 
+				//std::string texturetype = child->getAttributeValue<std::string>("texturetype", "unknown");
+				XmlTree detailsXml = child->getChild("details");
 			}
 		}
 		else {
 			// malformed XML
 			CI_LOG_V("malformed XML");
-			/* TODO?		TextureImageRef t(new TextureImage());
-					XmlTree		xml;
-					xml.setTag("details");
-					xml.setAttribute("path", "0.jpg");
-					xml.setAttribute("width", 640);
-					xml.setAttribute("height", 480);
-					t->fromXml(xml);
-					mTextureList.push_back(t);
-					VDFboRef f(new VDFbo());
-					XmlTree		initXml;
-					initXml.setTag("details");
-					initXml.setAttribute("path", "0.jpg");
-					initXml.setAttribute("width", 640);
-					initXml.setAttribute("height", 480);
-					initXml.setAttribute("shadername", "0.glsl");
-					f->fromXml(initXml);
-					VDFbolist.push_back(f);*/
+			
 		}
 		return mFbolist;
 	}
@@ -295,7 +219,7 @@ namespace VideoDromm {
 
 		// write file
 		doc.write(target);
-	}
+	}*/
 	XmlTree	VDFbo::toXml() const
 	{
 		XmlTree		xml;
@@ -310,7 +234,7 @@ namespace VideoDromm {
 
 	void VDFbo::fromXml(const XmlTree &xml)
 	{
-		// retrieve shader specific to this fbo
+		// retrieve shader specific to this fbo texture
 		string mGlslPath = xml.getAttributeValue<string>("shadername", "0.glsl");
 		if (mGlslPath.length() > 0) {
 			fs::path fr = getAssetPath("") / mGlslPath;// TODO / mVDSettings->mAssetsPath
@@ -324,6 +248,63 @@ namespace VideoDromm {
 				}
 			}
 		}
+		// duplicate from VDTexture.cpp TODO
+		string texturetype = xml.getAttributeValue<string>("texturetype", "unknown");
+		if (texturetype == "image") {
+			TextureImageRef t(TextureImage::create());
+			t->fromXml(xml);
+			mTextureList.push_back(t);
+		}
+		else if (texturetype == "imagesequence") {
+			TextureImageSequenceRef t(new TextureImageSequence());
+			t->fromXml(xml);
+			mTextureList.push_back(t);
+		}
+		else if (texturetype == "movie") {
+			TextureMovieRef t(new TextureMovie());
+			t->fromXml(xml);
+			mTextureList.push_back(t);
+		}
+		else if (texturetype == "camera") {
+#if (defined(  CINDER_MSW) ) || (defined( CINDER_MAC ))
+			TextureCameraRef t(new TextureCamera());
+			t->fromXml(xml);
+			mTextureList.push_back(t);
+#else
+			// camera not supported on this platform
+			CI_LOG_V("camera not supported on this platform");
+			XmlTree		xml;
+			xml.setTag("details");
+			xml.setAttribute("path", "0.jpg");
+			xml.setAttribute("width", 640);
+			xml.setAttribute("height", 480);
+			t->fromXml(xml);
+			mTextureList.push_back(t);
+#endif
+		}
+		else if (texturetype == "shared") {
+			TextureSharedRef t(new TextureShared());
+			t->fromXml(xml);
+			mTextureList.push_back(t);
+		}
+		else if (texturetype == "audio") {
+			TextureAudioRef t(new TextureAudio());
+			t->fromXml(xml);
+			mTextureList.push_back(t);
+		}
+		else {
+			// unknown texture type
+			CI_LOG_V("unknown texture type");
+			TextureImageRef t(new TextureImage());
+			XmlTree		xml;
+			xml.setTag("details");
+			xml.setAttribute("path", "0.jpg");
+			xml.setAttribute("width", 640);
+			xml.setAttribute("height", 480);
+			t->fromXml(xml);
+			mTextureList.push_back(t);
+		}
+
 	}
 	void VDFbo::setPosition(int x, int y) {
 		mPosX = ((float)x / (float)mWidth) - 0.5;

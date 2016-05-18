@@ -119,9 +119,6 @@ namespace VideoDromm {
 				// create mix of the correct type
 				XmlTree detailsXml = child->getChild("details");
 
-				VDFboRef f(new VDFbo());
-				f->fromXml(detailsXml);
-				mFboList.push_back(f);
 				VDMixRef t(new VDMix());
 				t->fromXml(detailsXml);
 				VDMixlist.push_back(t);
@@ -172,210 +169,220 @@ namespace VideoDromm {
 		if (mFbosPath.length() > 0) {
 			fs::path fboSettingsPath = getAssetPath("") / mFbosPath;// TODO / mVDSettings->mAssetsPath
 			if (fs::exists(fboSettingsPath)) {
-				try {
-					mFboList.push_back(VDFbo::create());
-					mFboList[mFboList.size() - 1]->readSettings(loadFile(fboSettingsPath));
-					CI_LOG_V("successfully loaded " + mFbosPath);
-				}
-				catch (Exception &exc) {
-					CI_LOG_EXCEPTION("error loading ", exc);
-				}
+
+				mFboList = VDFbo::readSettings(loadFile(fboSettingsPath));
 			}
+			else {
+				// otherwise create a texture from scratch
+				mFboList.push_back(VDMix::create());
+			}
+			/*try {
+				VDFboRef t(new VDFbo());
+				t->fromXml(xml);
+				mFboList.push_back(t);
+				//mFboList.push_back(new VDFbo());
+				//mFboList[mFboList.size() - 1]->fromXML(loadFile(fboSettingsPath));
+				CI_LOG_V("successfully loaded " + mFbosPath);
+			}
+			catch (Exception &exc) {
+				CI_LOG_EXCEPTION("error loading ", exc);
+			}*/
 		}
-
-	}
-	void VDMix::setPosition(int x, int y) {
-		mPosX = ((float)x / (float)mWidth) - 0.5;
-		mPosY = ((float)y / (float)mHeight) - 0.5;
-		for (auto &fbo : mFboList)
-		{
-			fbo->setPosition(mPosX, mPosY);
-		}
-	}
-	void VDMix::setZoom(float aZoom) {
-		mZoom = aZoom;
-		for (auto &fbo : mFboList)
-		{
-			fbo->setZoom(mZoom);
-		}
-	}
-	int VDMix::getTextureWidth() {
-		return mWidth;
-	};
-
-	int VDMix::getTextureHeight() {
-		return mHeight;
-	};
-	unsigned int VDMix::getInputTexturesCount(unsigned int aFboIndex) {
-		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
-		return mFboList[aFboIndex]->getInputTexturesCount();
-	}
-	string VDMix::getInputTextureName(unsigned int aFboIndex, unsigned int aTextureIndex) {
-		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
-		return mFboList[aFboIndex]->getInputTextureName(aTextureIndex);
-	}
-	string VDMix::getFboName(unsigned int aFboIndex) {
-		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
-		return mFboList[aFboIndex]->getName();
-	}
-	int VDMix::getFboTextureWidth(unsigned int aFboIndex) {
-		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
-		return mFboList[aFboIndex]->getTextureWidth();
-	};
-
-	int VDMix::getFboTextureHeight(unsigned int aFboIndex) {
-		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
-		return mFboList[aFboIndex]->getTextureHeight();
-	};
-
-	ci::ivec2 VDMix::getSize() {
-		return mMixFbo->getSize();
 	}
 
-	ci::Area VDMix::getBounds() {
-		return mMixFbo->getBounds();
-	}
-
-	GLuint VDMix::getId() {
-		return mMixFbo->getId();
-	}
-
-	std::string VDMix::getName(){
-		return mName;
-	}
-	// Render left FBO
-	void VDMix::renderLeftFbo()
+}
+void VDMix::setPosition(int x, int y) {
+	mPosX = ((float)x / (float)mWidth) - 0.5;
+	mPosY = ((float)y / (float)mHeight) - 0.5;
+	for (auto &fbo : mFboList)
 	{
-		gl::ScopedFramebuffer fbScp(mLeftFbo);
-		// clear out the FBO with blue
-		gl::clear(Color(0.25, 0.5f, 1.0f));
+		fbo->setPosition(mPosX, mPosY);
+	}
+}
+void VDMix::setZoom(float aZoom) {
+	mZoom = aZoom;
+	for (auto &fbo : mFboList)
+	{
+		fbo->setZoom(mZoom);
+	}
+}
+int VDMix::getTextureWidth() {
+	return mWidth;
+};
 
-		// setup the viewport to match the dimensions of the FBO
-		gl::ScopedViewport scpVp(ivec2(30), mLeftFbo->getSize());
+int VDMix::getTextureHeight() {
+	return mHeight;
+};
+unsigned int VDMix::getInputTexturesCount(unsigned int aFboIndex) {
+	if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+	return mFboList[aFboIndex]->getInputTexturesCount();
+}
+string VDMix::getInputTextureName(unsigned int aFboIndex, unsigned int aTextureIndex) {
+	if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+	return mFboList[aFboIndex]->getInputTextureName(aTextureIndex);
+}
+string VDMix::getFboName(unsigned int aFboIndex) {
+	if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+	return mFboList[aFboIndex]->getName();
+}
+int VDMix::getFboTextureWidth(unsigned int aFboIndex) {
+	if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+	return mFboList[aFboIndex]->getTextureWidth();
+};
 
-		// render the left fbo
-		gl::ScopedGlslProg shaderScp(gl::getStockShader(gl::ShaderDef().texture()));
+int VDMix::getFboTextureHeight(unsigned int aFboIndex) {
+	if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+	return mFboList[aFboIndex]->getTextureHeight();
+};
+
+ci::ivec2 VDMix::getSize() {
+	return mMixFbo->getSize();
+}
+
+ci::Area VDMix::getBounds() {
+	return mMixFbo->getBounds();
+}
+
+GLuint VDMix::getId() {
+	return mMixFbo->getId();
+}
+
+std::string VDMix::getName(){
+	return mName;
+}
+// Render left FBO
+void VDMix::renderLeftFbo()
+{
+	gl::ScopedFramebuffer fbScp(mLeftFbo);
+	// clear out the FBO with blue
+	gl::clear(Color(0.25, 0.5f, 1.0f));
+
+	// setup the viewport to match the dimensions of the FBO
+	gl::ScopedViewport scpVp(ivec2(30), mLeftFbo->getSize());
+
+	// render the left fbo
+	gl::ScopedGlslProg shaderScp(gl::getStockShader(gl::ShaderDef().texture()));
+	gl::ScopedTextureBind tex(mFboList[0]->getTexture());
+	gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
+}
+// Render left FBO
+void VDMix::renderRightFbo()
+{
+	gl::ScopedFramebuffer fbScp(mRightFbo);
+	// clear out the FBO with red
+	gl::clear(Color(1.0, 0.0f, 0.0f));
+
+	// setup the viewport to match the dimensions of the FBO
+	gl::ScopedViewport scpVp(ivec2(30), mRightFbo->getSize());
+
+	// render the right fbo
+	gl::ScopedGlslProg shaderScp(gl::getStockShader(gl::ShaderDef().texture()));
+	if (mFboList.size() > 1) {
+		gl::ScopedTextureBind tex(mFboList[1]->getTexture());
+
+	}
+	else {
+		CI_LOG_W("renderRightFbo: only one fbo, right renders left...");
 		gl::ScopedTextureBind tex(mFboList[0]->getTexture());
-		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
-	}
-	// Render left FBO
-	void VDMix::renderRightFbo()
-	{
-		gl::ScopedFramebuffer fbScp(mRightFbo);
-		// clear out the FBO with red
-		gl::clear(Color(1.0, 0.0f, 0.0f));
-
-		// setup the viewport to match the dimensions of the FBO
-		gl::ScopedViewport scpVp(ivec2(30), mRightFbo->getSize());
-
-		// render the right fbo
-		gl::ScopedGlslProg shaderScp(gl::getStockShader(gl::ShaderDef().texture()));
-		if (mFboList.size() > 1) {
-			gl::ScopedTextureBind tex(mFboList[1]->getTexture());
-
-		}
-		else {
-			CI_LOG_W("renderRightFbo: only one fbo, right renders left...");
-			gl::ScopedTextureBind tex(mFboList[0]->getTexture());
-
-		}
-		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
-	}
-	ci::gl::TextureRef VDMix::getRightFboTexture() {
-		return mRightFbo->getColorTexture();
-	}
-	ci::gl::TextureRef VDMix::getLeftFboTexture() {
-		return mLeftFbo->getColorTexture();
-	}
-	void VDMix::loadImageFile(string aFile, unsigned int aFboIndex, unsigned int aTextureIndex, bool right) {
-		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
-		mFboList[aFboIndex]->loadImageFile(aFile, aTextureIndex);
 
 	}
+	gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
+}
+ci::gl::TextureRef VDMix::getRightFboTexture() {
+	return mRightFbo->getColorTexture();
+}
+ci::gl::TextureRef VDMix::getLeftFboTexture() {
+	return mLeftFbo->getColorTexture();
+}
+void VDMix::loadImageFile(string aFile, unsigned int aFboIndex, unsigned int aTextureIndex, bool right) {
+	if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+	mFboList[aFboIndex]->loadImageFile(aFile, aTextureIndex);
 
-	ci::gl::Texture2dRef VDMix::getFboTexture(unsigned int aFboIndex) {
-		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
-		return mFboList[aFboIndex]->getTexture();
-	}
-	ci::gl::Texture2dRef VDMix::getFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex) {
-		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
-		return mFboList[aFboIndex]->getInputTexture(aFboInputTextureIndex);
-	}
-	void VDMix::setCrossfade(float aCrossfade) {
-		mVDSettings->controlValues[21] = aCrossfade;
-	}
-	ci::gl::TextureRef VDMix::getTexture() {
-		renderLeftFbo();
-		renderRightFbo();
-		iChannelResolution0 = vec3(mPosX, mPosY, 0.5);
-		gl::ScopedFramebuffer fbScp(mMixFbo);
-		gl::clear(Color::white());
-		// setup the viewport to match the dimensions of the FBO
-		gl::ScopedViewport scpVp(ivec2(5), mMixFbo->getSize());
-		gl::ScopedGlslProg shaderScp(mMixShader);
-		mRightFbo->bindTexture(0);
-		mLeftFbo->bindTexture(1);
+}
 
-		mMixShader->uniform("iGlobalTime", mVDSettings->iGlobalTime);
-		mMixShader->uniform("iResolution", vec3(mWidth, mHeight, 1.0));
-		mMixShader->uniform("iChannelResolution[0]", iChannelResolution0);
-		mMixShader->uniform("iMouse", vec4(mVDSettings->mRenderPosXY.x, mVDSettings->mRenderPosXY.y, mVDSettings->iMouse.z, mVDSettings->iMouse.z));//iMouse =  Vec3i( event.getX(), mRenderHeight - event.getY(), 1 );
-		mMixShader->uniform("iZoom", mZoom);
-		mMixShader->uniform("iChannel0", 0);
-		mMixShader->uniform("iChannel1", 1);
-		mMixShader->uniform("iAudio0", 0);
-		mMixShader->uniform("iFreq0", mVDSettings->iFreqs[0]);
-		mMixShader->uniform("iFreq1", mVDSettings->iFreqs[1]);
-		mMixShader->uniform("iFreq2", mVDSettings->iFreqs[2]);
-		mMixShader->uniform("iFreq3", mVDSettings->iFreqs[3]);
-		mMixShader->uniform("iChannelTime", mVDSettings->iChannelTime, 4);
-		mMixShader->uniform("iColor", vec3(mVDSettings->controlValues[1], mVDSettings->controlValues[2], mVDSettings->controlValues[3]));// mVDSettings->iColor);
-		mMixShader->uniform("iBackgroundColor", vec3(mVDSettings->controlValues[5], mVDSettings->controlValues[6], mVDSettings->controlValues[7]));// mVDSettings->iBackgroundColor);
-		mMixShader->uniform("iSteps", (int)mVDSettings->controlValues[20]);
-		mMixShader->uniform("iRatio", mVDSettings->controlValues[11]);//check if needed: +1;//mVDSettings->iRatio); 
-		mMixShader->uniform("width", 1);
-		mMixShader->uniform("height", 1);
-		mMixShader->uniform("iRenderXY", vec2(0.0, 0.0));
-		mMixShader->uniform("iAlpha", mVDSettings->controlValues[4]);
-		mMixShader->uniform("iBlendmode", mVDSettings->iBlendMode);
-		mMixShader->uniform("iRotationSpeed", mVDSettings->controlValues[19]);
-		mMixShader->uniform("iCrossfade", mVDSettings->controlValues[21]);
-		mMixShader->uniform("iPixelate", mVDSettings->controlValues[15]);
-		mMixShader->uniform("iExposure", mVDSettings->controlValues[14]);
-		mMixShader->uniform("iFade", (int)mVDSettings->iFade);
-		mMixShader->uniform("iToggle", (int)mVDSettings->controlValues[46]);
-		mMixShader->uniform("iLight", (int)mVDSettings->iLight);
-		mMixShader->uniform("iLightAuto", (int)mVDSettings->iLightAuto);
-		mMixShader->uniform("iGreyScale", (int)mVDSettings->iGreyScale);
-		mMixShader->uniform("iTransition", mVDSettings->iTransition);
-		mMixShader->uniform("iAnim", mVDSettings->iAnim.value());
-		mMixShader->uniform("iRepeat", (int)mVDSettings->iRepeat);
-		mMixShader->uniform("iVignette", (int)mVDSettings->controlValues[47]);
-		mMixShader->uniform("iInvert", (int)mVDSettings->controlValues[48]);
-		mMixShader->uniform("iDebug", (int)mVDSettings->iDebug);
-		mMixShader->uniform("iShowFps", (int)mVDSettings->iShowFps);
-		mMixShader->uniform("iFps", mVDSettings->iFps);
-		// TODO mMixShader->uniform("iDeltaTime", mVDAnimation->iDeltaTime);
-		// TODO mMixShader->uniform("iTempoTime", mVDAnimation->iTempoTime);
-		mMixShader->uniform("iTempoTime", 1.0f);
-		mMixShader->uniform("iGlitch", (int)mVDSettings->controlValues[45]);
-		mMixShader->uniform("iBeat", mVDSettings->iBeat);
-		mMixShader->uniform("iSeed", mVDSettings->iSeed);
-		mMixShader->uniform("iFlipH", mFlipH);
-		mMixShader->uniform("iFlipV", mFlipV);
+ci::gl::Texture2dRef VDMix::getFboTexture(unsigned int aFboIndex) {
+	if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+	return mFboList[aFboIndex]->getTexture();
+}
+ci::gl::Texture2dRef VDMix::getFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex) {
+	if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+	return mFboList[aFboIndex]->getInputTexture(aFboInputTextureIndex);
+}
+void VDMix::setCrossfade(float aCrossfade) {
+	mVDSettings->controlValues[21] = aCrossfade;
+}
+ci::gl::TextureRef VDMix::getTexture() {
+	renderLeftFbo();
+	renderRightFbo();
+	iChannelResolution0 = vec3(mPosX, mPosY, 0.5);
+	gl::ScopedFramebuffer fbScp(mMixFbo);
+	gl::clear(Color::white());
+	// setup the viewport to match the dimensions of the FBO
+	gl::ScopedViewport scpVp(ivec2(5), mMixFbo->getSize());
+	gl::ScopedGlslProg shaderScp(mMixShader);
+	mRightFbo->bindTexture(0);
+	mLeftFbo->bindTexture(1);
+
+	mMixShader->uniform("iGlobalTime", mVDSettings->iGlobalTime);
+	mMixShader->uniform("iResolution", vec3(mWidth, mHeight, 1.0));
+	mMixShader->uniform("iChannelResolution[0]", iChannelResolution0);
+	mMixShader->uniform("iMouse", vec4(mVDSettings->mRenderPosXY.x, mVDSettings->mRenderPosXY.y, mVDSettings->iMouse.z, mVDSettings->iMouse.z));//iMouse =  Vec3i( event.getX(), mRenderHeight - event.getY(), 1 );
+	mMixShader->uniform("iZoom", mZoom);
+	mMixShader->uniform("iChannel0", 0);
+	mMixShader->uniform("iChannel1", 1);
+	mMixShader->uniform("iAudio0", 0);
+	mMixShader->uniform("iFreq0", mVDSettings->iFreqs[0]);
+	mMixShader->uniform("iFreq1", mVDSettings->iFreqs[1]);
+	mMixShader->uniform("iFreq2", mVDSettings->iFreqs[2]);
+	mMixShader->uniform("iFreq3", mVDSettings->iFreqs[3]);
+	mMixShader->uniform("iChannelTime", mVDSettings->iChannelTime, 4);
+	mMixShader->uniform("iColor", vec3(mVDSettings->controlValues[1], mVDSettings->controlValues[2], mVDSettings->controlValues[3]));// mVDSettings->iColor);
+	mMixShader->uniform("iBackgroundColor", vec3(mVDSettings->controlValues[5], mVDSettings->controlValues[6], mVDSettings->controlValues[7]));// mVDSettings->iBackgroundColor);
+	mMixShader->uniform("iSteps", (int)mVDSettings->controlValues[20]);
+	mMixShader->uniform("iRatio", mVDSettings->controlValues[11]);//check if needed: +1;//mVDSettings->iRatio); 
+	mMixShader->uniform("width", 1);
+	mMixShader->uniform("height", 1);
+	mMixShader->uniform("iRenderXY", vec2(0.0, 0.0));
+	mMixShader->uniform("iAlpha", mVDSettings->controlValues[4]);
+	mMixShader->uniform("iBlendmode", mVDSettings->iBlendMode);
+	mMixShader->uniform("iRotationSpeed", mVDSettings->controlValues[19]);
+	mMixShader->uniform("iCrossfade", mVDSettings->controlValues[21]);
+	mMixShader->uniform("iPixelate", mVDSettings->controlValues[15]);
+	mMixShader->uniform("iExposure", mVDSettings->controlValues[14]);
+	mMixShader->uniform("iFade", (int)mVDSettings->iFade);
+	mMixShader->uniform("iToggle", (int)mVDSettings->controlValues[46]);
+	mMixShader->uniform("iLight", (int)mVDSettings->iLight);
+	mMixShader->uniform("iLightAuto", (int)mVDSettings->iLightAuto);
+	mMixShader->uniform("iGreyScale", (int)mVDSettings->iGreyScale);
+	mMixShader->uniform("iTransition", mVDSettings->iTransition);
+	mMixShader->uniform("iAnim", mVDSettings->iAnim.value());
+	mMixShader->uniform("iRepeat", (int)mVDSettings->iRepeat);
+	mMixShader->uniform("iVignette", (int)mVDSettings->controlValues[47]);
+	mMixShader->uniform("iInvert", (int)mVDSettings->controlValues[48]);
+	mMixShader->uniform("iDebug", (int)mVDSettings->iDebug);
+	mMixShader->uniform("iShowFps", (int)mVDSettings->iShowFps);
+	mMixShader->uniform("iFps", mVDSettings->iFps);
+	// TODO mMixShader->uniform("iDeltaTime", mVDAnimation->iDeltaTime);
+	// TODO mMixShader->uniform("iTempoTime", mVDAnimation->iTempoTime);
+	mMixShader->uniform("iTempoTime", 1.0f);
+	mMixShader->uniform("iGlitch", (int)mVDSettings->controlValues[45]);
+	mMixShader->uniform("iBeat", mVDSettings->iBeat);
+	mMixShader->uniform("iSeed", mVDSettings->iSeed);
+	mMixShader->uniform("iFlipH", mFlipH);
+	mMixShader->uniform("iFlipV", mFlipV);
 
 
-		mMixShader->uniform("iTrixels", mVDSettings->controlValues[16]);
-		mMixShader->uniform("iGridSize", mVDSettings->controlValues[17]);
-		mMixShader->uniform("iRedMultiplier", mVDSettings->iRedMultiplier);
-		mMixShader->uniform("iGreenMultiplier", mVDSettings->iGreenMultiplier);
-		mMixShader->uniform("iBlueMultiplier", mVDSettings->iBlueMultiplier);
-		mMixShader->uniform("iParam1", mVDSettings->iParam1);
-		mMixShader->uniform("iParam2", mVDSettings->iParam2);
-		mMixShader->uniform("iXorY", mVDSettings->iXorY);
-		mMixShader->uniform("iBadTv", mVDSettings->iBadTv);
+	mMixShader->uniform("iTrixels", mVDSettings->controlValues[16]);
+	mMixShader->uniform("iGridSize", mVDSettings->controlValues[17]);
+	mMixShader->uniform("iRedMultiplier", mVDSettings->iRedMultiplier);
+	mMixShader->uniform("iGreenMultiplier", mVDSettings->iGreenMultiplier);
+	mMixShader->uniform("iBlueMultiplier", mVDSettings->iBlueMultiplier);
+	mMixShader->uniform("iParam1", mVDSettings->iParam1);
+	mMixShader->uniform("iParam2", mVDSettings->iParam2);
+	mMixShader->uniform("iXorY", mVDSettings->iXorY);
+	mMixShader->uniform("iBadTv", mVDSettings->iBadTv);
 
-		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
-		return mMixFbo->getColorTexture();
-	}
+	gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
+	return mMixFbo->getColorTexture();
+}
 } // namespace VideoDromm
