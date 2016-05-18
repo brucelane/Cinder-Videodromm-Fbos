@@ -173,7 +173,8 @@ namespace VideoDromm {
 	{
 		mType = MIX;
 		// init at least one fbo
-		if (mFbos.size() == 0) mFbos.push_back(VDFbo::create());
+		// TODO TODO CREATE 2 FBOSif (mFbos.size() == 0) 
+			mFbos.push_back(VDFbo::create());
 		// retrieve fbos specific to this mixfbo
 		mFbosPath = xml.getAttributeValue<string>("fbopath", "fbos.xml");
 		if (mFbosPath.length() > 0) {

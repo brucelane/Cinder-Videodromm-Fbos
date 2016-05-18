@@ -16,12 +16,12 @@ namespace VideoDromm {
 		, mWidth(640)
 		, mHeight(480)
 	{
+		CI_LOG_V("VDFbo constructor");
 		mType = aType;
 		mPosX = mPosY = 0.0f;
 		mZoom = 1.0f;
 		// init the fbo whatever happens next
 		gl::Fbo::Format format;
-		//format.setSamples( 4 ); // uncomment this to enable 4x antialiasing
 		mFbo = gl::Fbo::create(mWidth, mHeight, format.depthTexture());
 		// init with passthru shader
 		mShaderName = "fbotexture";
@@ -79,8 +79,7 @@ namespace VideoDromm {
 	VDFbo::~VDFbo(void) {
 
 	}
-	int VDFbo::loadPixelFragmentShader(string aFilePath)
-	{
+	int VDFbo::loadPixelFragmentShader(string aFilePath) {
 		int rtn = -1;
 		// reset 
 		//mVDSettings->iFade = false;
@@ -164,6 +163,7 @@ namespace VideoDromm {
 		XmlTree			doc;
 		VDFboList	VDFbolist;
 
+		CI_LOG_V("VDFbo readSettings");
 		// try to load the specified xml file
 		try { doc = XmlTree(source); }
 		catch (...) { return VDFbolist; }
@@ -180,7 +180,9 @@ namespace VideoDromm {
 				// create fbo of the correct type
 				std::string texturetype = child->getAttributeValue<std::string>("texturetype", "unknown");
 				XmlTree detailsXml = child->getChild("details");
-
+				string shaderToLoad = detailsXml.getAttributeValue<string>("shadername", "");
+				fs::path shaderFullPath = getAssetPath("") / shaderToLoad;
+				loadPixelFragmentShader(shaderFullPath.string());
 				// duplicate from VDTexture.cpp TODO
 				if (texturetype == "image") {
 					TextureImageRef t(new TextureImage());

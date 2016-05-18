@@ -105,6 +105,7 @@ namespace VideoDromm
 		gl::FboRef						mMixFbo, mLeftFbo, mRightFbo;
 		void							renderLeftFbo();
 		void							renderRightFbo();
+		// maintain a list of fbo for right only or left/right or more fbos specific to this mix
 		VDFboList						mFbos;
 		fs::path						mFbosFilepath;
 		//! Shaders
