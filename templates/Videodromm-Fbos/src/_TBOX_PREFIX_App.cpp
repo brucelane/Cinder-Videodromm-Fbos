@@ -95,8 +95,19 @@ void _TBOX_PREFIX_App::draw()
 	gl::draw(mMixes[0]->getLeftFboTexture(), Rectf(128, 0, 256, 128));
 	gl::draw(mMixes[0]->getFboTexture(0), Rectf(256, 0, 384, 128));
 	gl::draw(mMixes[0]->getFboTexture(1), Rectf(384, 0, 512, 128));
-	gl::draw(mMixes[0]->getFboInputTexture(0,0), Rectf(0, 128, 128, 256));
-	gl::draw(mMixes[0]->getTexture(), Rectf(128, 128, 256, 256));
+	gl::draw(mMixes[0]->getTexture(), Rectf(512, 0, 640, 128));
+
+	gl::draw(mMixes[0]->getFboInputTexture(0, 0), Rectf(0, 128, 128, 256));
+	gl::draw(mMixes[0]->getFboInputTexture(0, 1), Rectf(128, 128, 256, 256));
+	gl::draw(mMixes[0]->getFboInputTexture(0, 2), Rectf(256, 128, 384, 256));
+	gl::draw(mMixes[0]->getFboInputTexture(0, 3), Rectf(384, 128, 512, 256));
+	gl::draw(mMixes[0]->getFboInputTexture(0, 4), Rectf(512, 128, 640, 256));
+
+	gl::draw(mMixes[0]->getFboInputTexture(1, 0), Rectf(0, 256, 128, 384));
+	gl::draw(mMixes[0]->getFboInputTexture(1, 1), Rectf(128, 256, 256, 384));
+	gl::draw(mMixes[0]->getFboInputTexture(1, 2), Rectf(256, 256, 384, 384));
+	gl::draw(mMixes[0]->getFboInputTexture(1, 3), Rectf(384, 256, 512, 384));
+	gl::draw(mMixes[0]->getFboInputTexture(1, 4), Rectf(512, 256, 640, 384));
 }
 
 
