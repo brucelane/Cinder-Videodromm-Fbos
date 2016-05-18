@@ -57,6 +57,7 @@ namespace VideoDromm
 		int								loadPixelFragmentShader(string aFilePath);
 		int								setGLSLString(string pixelFrag, string name);
 		// textures
+		void							setInputTexture(unsigned int aTextureIndex);
 		ci::gl::Texture2dRef			getInputTexture(unsigned int aIndex);
 		unsigned int					getInputTexturesCount() { return mTexs.size(); };
 		string							getInputTextureName(unsigned int aTextureIndex);
@@ -89,6 +90,7 @@ namespace VideoDromm
 		//! Fbo
 		gl::FboRef						mFbo;
 		VDTextureList					mTexs;
+		unsigned int					inputTextureIndex;
 		//! Shaders
 		string							mShaderName;
 	};

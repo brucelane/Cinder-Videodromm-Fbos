@@ -18,6 +18,7 @@ namespace VideoDromm {
 	{
 		CI_LOG_V("VDFbo constructor");
 		mType = aType;
+		inputTextureIndex = 0;
 		mPosX = mPosY = 0.0f;
 		mZoom = 1.0f;
 		// init the fbo whatever happens next
@@ -176,7 +177,7 @@ namespace VideoDromm {
 			XmlTree fboXml = doc.getChild("fbos");
 
 			// iterate textures
-			for (XmlTree::ConstIter child = fboXml.begin("fbo"); child != fboXml.end(); ++child) {
+			for (XmlTree::ConstIter child = fboXml.begin("texture"); child != fboXml.end(); ++child) {
 				// create fbo of the correct type
 				std::string texturetype = child->getAttributeValue<std::string>("texturetype", "unknown");
 				XmlTree detailsXml = child->getChild("details");
@@ -272,7 +273,7 @@ namespace VideoDromm {
 		for (unsigned int i = 0; i < VDFbolist.size(); ++i) {
 			// create <texture>
 			XmlTree			fbo;
-			fbo.setTag("fbo");
+			fbo.setTag("texture");
 			fbo.setAttribute("id", i + 1);
 			switch (VDFbolist[i]->mType) {
 			case IMAGE: fbo.setAttribute("texturetype", "image"); break;
@@ -361,6 +362,10 @@ namespace VideoDromm {
 	std::string VDFbo::getName(){
 		return mFboName;
 	}
+	void VDFbo::setInputTexture(unsigned int aTextureIndex) {
+		if (aTextureIndex > mTexs.size() - 1) aTextureIndex = mTexs.size() - 1;
+		inputTextureIndex = aTextureIndex;
+	}
 
 	ci::gl::Texture2dRef VDFbo::getInputTexture(unsigned int aIndex) {
 		if (aIndex > mTexs.size() - 1) aIndex = mTexs.size() - 1;
@@ -382,13 +387,14 @@ namespace VideoDromm {
 		// setup the viewport to match the dimensions of the FBO
 		gl::ScopedViewport scpVp(ivec2(0), mFbo->getSize());
 		gl::ScopedGlslProg shaderScp(mFboTextureShader);
+		CI_LOG_V(mFboTextureShader->getLabel());
 		//mShader->bind();
 		mFboTextureShader->uniform("iGlobalTime", (float)getElapsedSeconds()); //TODO
 		mFboTextureShader->uniform("iResolution", vec3(mWidth, mHeight, 1.0));
 		mFboTextureShader->uniform("iChannelResolution[0]", iChannelResolution0);
 		mFboTextureShader->uniform("iChannel0", 0);
 		mFboTextureShader->uniform("iZoom", mZoom);
-		gl::ScopedTextureBind tex(mTexs[0]->getTexture());
+		gl::ScopedTextureBind tex(mTexs[inputTextureIndex]->getTexture());
 		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
 		return mFbo->getColorTexture();
 	}
