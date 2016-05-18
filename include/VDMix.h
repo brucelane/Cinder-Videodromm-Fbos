@@ -30,8 +30,7 @@ namespace VideoDromm
 
 	class VDMix : public std::enable_shared_from_this < VDMix > {
 	public:
-		typedef enum { MIX } MixType;
-		VDMix(MixType aType = MIX);
+		VDMix();
 		~VDMix(void);
 		static VDMixRef create() { return std::make_shared<VDMix>(); }
 		//! returns a shared pointer to this fbo
@@ -39,8 +38,6 @@ namespace VideoDromm
 		ci::ivec2						getSize();
 		ci::Area						getBounds();
 		GLuint							getId();
-		//! returns the type
-		MixType							getType() { return mType; };
 		std::string						getName();
 		bool							isFlipH() { return mFlipH; };
 		bool							isFlipV() { return mFlipV; };
@@ -70,7 +67,7 @@ namespace VideoDromm
 		int								getFboTextureWidth(unsigned int aFboIndex);
 		int								getFboTextureHeight(unsigned int aFboIndex);
 		unsigned int					getInputTexturesCount(unsigned int aFboIndex);
-		unsigned int					getFboCount() { return mFbos.size(); };
+		unsigned int					getFboCount() { return mFboList.size(); };
 		string							getFboName(unsigned int aFboIndex);
 		string							getInputTextureName(unsigned int aFboIndex, unsigned int aTextureIndex);
 		// uniforms
@@ -79,7 +76,6 @@ namespace VideoDromm
 		std::string						mName;
 		bool							mFlipV;
 		bool							mFlipH;
-		MixType							mType;
 		std::string						mFbosPath;
 		//bool							mTopDown;
 		int								mWidth;
@@ -106,7 +102,7 @@ namespace VideoDromm
 		void							renderLeftFbo();
 		void							renderRightFbo();
 		// maintain a list of fbo for right only or left/right or more fbos specific to this mix
-		VDFboList						mFbos;
+		static VDFboList				mFboList;
 		fs::path						mFbosFilepath;
 		//! Shaders
 		string							mMixShaderName;

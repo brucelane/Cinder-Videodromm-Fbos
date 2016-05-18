@@ -47,9 +47,9 @@ namespace VideoDromm
 		//!
 		XmlTree							toXml() const;
 		//! read a xml file and pass back a vector of VDFbos
-		VDFboList						readSettings(const ci::DataSourceRef &source);
+		static VDFboList				readSettings(const ci::DataSourceRef &source);
 		//! write a xml file
-		void							writeSettings(const VDFboList &VDFbolist, const ci::DataTargetRef &target);
+		static void						writeSettings(const VDFboList &VDFbolist, const ci::DataTargetRef &target);
 		// move, rotate, zoom methods
 		void							setPosition(int x, int y);
 		void							setZoom(float aZoom);
@@ -59,7 +59,7 @@ namespace VideoDromm
 		// textures
 		void							setInputTexture(unsigned int aTextureIndex);
 		ci::gl::Texture2dRef			getInputTexture(unsigned int aIndex);
-		unsigned int					getInputTexturesCount() { return mTexs.size(); };
+		unsigned int					getInputTexturesCount() { return mTextureList.size(); };
 		string							getInputTextureName(unsigned int aTextureIndex);
 		ci::gl::Texture2dRef			getTexture();
 		void							loadImageFile(string aFile, unsigned int aTextureIndex);
@@ -89,7 +89,7 @@ namespace VideoDromm
 	private:
 		//! Fbo
 		gl::FboRef						mFbo;
-		VDTextureList					mTexs;
+		VDTextureList					mTextureList;
 		unsigned int					inputTextureIndex;
 		//! Shaders
 		string							mShaderName;

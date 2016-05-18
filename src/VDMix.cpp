@@ -7,7 +7,7 @@ using namespace ci;
 using namespace ci::app;
 
 namespace VideoDromm {
-	VDMix::VDMix(MixType aType)
+	VDMix::VDMix()
 		: mFbosPath("fbos.xml")
 		, mName("")
 		, mFlipV(false)
@@ -17,12 +17,12 @@ namespace VideoDromm {
 	{
 		// Settings
 		mVDSettings = VDSettings::create();
-		mFbosFilepath = getAssetPath("") / mFbosPath;
+		/*mFbosFilepath = getAssetPath("") / mFbosPath;
 		mFbos.push_back(VDFbo::create());
 		if (fs::exists(mFbosFilepath)) {
-			// load textures from file if one exists
-			mFbos[mFbos.size() - 1]->readSettings(loadFile(mFbosFilepath));
-		}
+		// load textures from file if one exists
+		mFbos[mFbos.size() - 1]->readSettings(loadFile(mFbosFilepath));
+		}*/
 		if (mName.length() == 0) {
 			mName = mFbosPath;
 		}
@@ -92,7 +92,7 @@ namespace VideoDromm {
 	}
 	int VDMix::loadFboFragmentShader(string aFilePath, bool right)
 	{
-		return mFbos[0]->loadPixelFragmentShader(aFilePath);// TODO right or left
+		return mFboList[0]->loadPixelFragmentShader(aFilePath);// TODO right or left
 	}
 
 	VDMixList VDMix::readSettings(const DataSourceRef &source)
@@ -100,6 +100,7 @@ namespace VideoDromm {
 		XmlTree			doc;
 		VDMixList	VDMixlist;
 
+		CI_LOG_V("VDMix readSettings");
 		// try to load the specified xml file
 		try { doc = XmlTree(source); }
 		catch (...) { return VDMixlist; }
@@ -114,17 +115,16 @@ namespace VideoDromm {
 			XmlTree mixXml = doc.getChild("mixes");
 
 			// iterate textures
-			for (XmlTree::ConstIter child = mixXml.begin("mix"); child != mixXml.end(); ++child) {
+			for (XmlTree::ConstIter child = mixXml.begin("fbo"); child != mixXml.end(); ++child) {
 				// create mix of the correct type
-				std::string mixtype = child->getAttributeValue<std::string>("mixtype", "mix");
 				XmlTree detailsXml = child->getChild("details");
 
-				if (mixtype == "mix") {
-					VDMixRef t(new VDMix());
-					t->fromXml(detailsXml);
-					VDMixlist.push_back(t);
-				}
-
+				VDFboRef f(new VDFbo());
+				f->fromXml(detailsXml);
+				mFboList.push_back(f);
+				VDMixRef t(new VDMix());
+				t->fromXml(detailsXml);
+				VDMixlist.push_back(t);
 			}
 		}
 
@@ -142,12 +142,8 @@ namespace VideoDromm {
 		for (unsigned int i = 0; i < VDMixlist.size(); ++i) {
 			// create <texture>
 			XmlTree			mix;
-			mix.setTag("mix");
+			mix.setTag("fbo");
 			mix.setAttribute("id", i + 1);
-			switch (VDMixlist[i]->mType) {
-			case MIX: mix.setAttribute("mixtype", "mix"); break;
-			default: mix.setAttribute("mixtype", "unknown"); break;
-			}
 			// details specific to texture type
 			mix.push_back(VDMixlist[i]->toXml());
 
@@ -171,17 +167,14 @@ namespace VideoDromm {
 
 	void VDMix::fromXml(const XmlTree &xml)
 	{
-		mType = MIX;
-		// init at least one fbo
-		// TODO TODO CREATE 2 FBOSif (mFbos.size() == 0) 
-			mFbos.push_back(VDFbo::create());
-		// retrieve fbos specific to this mixfbo
-		mFbosPath = xml.getAttributeValue<string>("fbopath", "fbos.xml");
+		// retrieve fbos specific to this mix
+		mFbosPath = xml.getAttributeValue<string>("fbopath", "");
 		if (mFbosPath.length() > 0) {
 			fs::path fboSettingsPath = getAssetPath("") / mFbosPath;// TODO / mVDSettings->mAssetsPath
-			if (fs::exists(mFbosFilepath)) {
+			if (fs::exists(fboSettingsPath)) {
 				try {
-					mFbos[mFbos.size() - 1]->readSettings(loadFile(fboSettingsPath));
+					mFboList.push_back(VDFbo::create());
+					mFboList[mFboList.size() - 1]->readSettings(loadFile(fboSettingsPath));
 					CI_LOG_V("successfully loaded " + mFbosPath);
 				}
 				catch (Exception &exc) {
@@ -194,14 +187,14 @@ namespace VideoDromm {
 	void VDMix::setPosition(int x, int y) {
 		mPosX = ((float)x / (float)mWidth) - 0.5;
 		mPosY = ((float)y / (float)mHeight) - 0.5;
-		for (auto &fbo : mFbos)
+		for (auto &fbo : mFboList)
 		{
 			fbo->setPosition(mPosX, mPosY);
 		}
 	}
 	void VDMix::setZoom(float aZoom) {
 		mZoom = aZoom;
-		for (auto &fbo : mFbos)
+		for (auto &fbo : mFboList)
 		{
 			fbo->setZoom(mZoom);
 		}
@@ -214,25 +207,25 @@ namespace VideoDromm {
 		return mHeight;
 	};
 	unsigned int VDMix::getInputTexturesCount(unsigned int aFboIndex) {
-		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
-		return mFbos[aFboIndex]->getInputTexturesCount();
+		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+		return mFboList[aFboIndex]->getInputTexturesCount();
 	}
 	string VDMix::getInputTextureName(unsigned int aFboIndex, unsigned int aTextureIndex) {
-		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
-		return mFbos[aFboIndex]->getInputTextureName(aTextureIndex);
+		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+		return mFboList[aFboIndex]->getInputTextureName(aTextureIndex);
 	}
 	string VDMix::getFboName(unsigned int aFboIndex) {
-		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
-		return mFbos[aFboIndex]->getName();
+		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+		return mFboList[aFboIndex]->getName();
 	}
 	int VDMix::getFboTextureWidth(unsigned int aFboIndex) {
-		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
-		return mFbos[aFboIndex]->getTextureWidth();
+		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+		return mFboList[aFboIndex]->getTextureWidth();
 	};
 
 	int VDMix::getFboTextureHeight(unsigned int aFboIndex) {
-		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
-		return mFbos[aFboIndex]->getTextureHeight();
+		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+		return mFboList[aFboIndex]->getTextureHeight();
 	};
 
 	ci::ivec2 VDMix::getSize() {
@@ -262,7 +255,7 @@ namespace VideoDromm {
 
 		// render the left fbo
 		gl::ScopedGlslProg shaderScp(gl::getStockShader(gl::ShaderDef().texture()));
-		gl::ScopedTextureBind tex(mFbos[0]->getTexture());
+		gl::ScopedTextureBind tex(mFboList[0]->getTexture());
 		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
 	}
 	// Render left FBO
@@ -277,36 +270,36 @@ namespace VideoDromm {
 
 		// render the right fbo
 		gl::ScopedGlslProg shaderScp(gl::getStockShader(gl::ShaderDef().texture()));
-		if (mFbos.size() > 1) {
-			gl::ScopedTextureBind tex(mFbos[1]->getTexture());
+		if (mFboList.size() > 1) {
+			gl::ScopedTextureBind tex(mFboList[1]->getTexture());
 
 		}
 		else {
 			CI_LOG_W("renderRightFbo: only one fbo, right renders left...");
-			gl::ScopedTextureBind tex(mFbos[0]->getTexture());
+			gl::ScopedTextureBind tex(mFboList[0]->getTexture());
 
 		}
 		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
 	}
 	ci::gl::TextureRef VDMix::getRightFboTexture() {
-		return mLeftFbo->getColorTexture();
-	}
-	ci::gl::TextureRef VDMix::getLeftFboTexture() {
 		return mRightFbo->getColorTexture();
 	}
+	ci::gl::TextureRef VDMix::getLeftFboTexture() {
+		return mLeftFbo->getColorTexture();
+	}
 	void VDMix::loadImageFile(string aFile, unsigned int aFboIndex, unsigned int aTextureIndex, bool right) {
-		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
-		mFbos[aFboIndex]->loadImageFile(aFile, aTextureIndex);
+		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+		mFboList[aFboIndex]->loadImageFile(aFile, aTextureIndex);
 
 	}
 
 	ci::gl::Texture2dRef VDMix::getFboTexture(unsigned int aFboIndex) {
-		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
-		return mFbos[aFboIndex]->getTexture();
+		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+		return mFboList[aFboIndex]->getTexture();
 	}
 	ci::gl::Texture2dRef VDMix::getFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex) {
-		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
-		return mFbos[aFboIndex]->getInputTexture(aFboInputTextureIndex);
+		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+		return mFboList[aFboIndex]->getInputTexture(aFboInputTextureIndex);
 	}
 	void VDMix::setCrossfade(float aCrossfade) {
 		mVDSettings->controlValues[21] = aCrossfade;
