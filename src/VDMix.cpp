@@ -283,8 +283,8 @@ namespace VideoDromm {
 	}
 	void VDMix::loadImageFile(string aFile, unsigned int aFboIndex, unsigned int aTextureIndex, bool right) {
 		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+		CI_LOG_V("fbolist" + toString(aFboIndex) + ": loadImageFile " + aFile + " at textureIndex " + toString(aTextureIndex));
 		mFboList[aFboIndex]->loadImageFile(aFile, aTextureIndex);
-
 	}
 
 	ci::gl::Texture2dRef VDMix::getFboTexture(unsigned int aFboIndex) {
