@@ -115,12 +115,10 @@ namespace VideoDromm {
 			XmlTree mixXml = doc.getChild("mixes");
 
 			// iterate textures
-			for (XmlTree::ConstIter child = mixXml.begin("fbo"); child != mixXml.end(); ++child) {
-				// create mix of the correct type
-				XmlTree detailsXml = child->getChild("details");
-
+			for (XmlTree::ConstIter child = mixXml.begin("mix"); child != mixXml.end(); ++child) {
+				// add the mix to the list
 				VDMixRef t(new VDMix());
-				t->fromXml(detailsXml);
+				t->fromXml(*child);
 				VDMixlist.push_back(t);
 			}
 		}
@@ -165,8 +163,17 @@ namespace VideoDromm {
 	void VDMix::fromXml(const XmlTree &xml)
 	{
 		// retrieve fbos specific to this mix
-		mFbosPath = xml.getAttributeValue<string>("fbopath", "");
-		if (mFbosPath.length() > 0) {
+		//mFbosPath = xml.getAttributeValue<string>("fbopath", "");
+		// find fbo childs
+		if (xml.hasChild("fbo")) {
+			for (XmlTree::ConstIter fboChild = xml.begin("fbo"); fboChild != xml.end(); ++fboChild) {
+				//XmlTree fboXml = fboChild->getChild("fbo");
+				VDFboRef t(new VDFbo());
+				t->fromXml(*fboChild);
+				mFboList.push_back(t);
+			}
+		}
+		/*if (mFbosPath.length() > 0) {
 			fs::path fboSettingsPath = getAssetPath("") / mFbosPath;// TODO / mVDSettings->mAssetsPath
 			if (fs::exists(fboSettingsPath)) {
 
@@ -176,7 +183,7 @@ namespace VideoDromm {
 				// otherwise create a texture from scratch
 				mFboList.push_back(VDMix::create());
 			}
-			/*try {
+			try {
 				VDFboRef t(new VDFbo());
 				t->fromXml(xml);
 				mFboList.push_back(t);
@@ -186,9 +193,9 @@ namespace VideoDromm {
 			}
 			catch (Exception &exc) {
 				CI_LOG_EXCEPTION("error loading ", exc);
-			}*/
+			}
 		}
-	}
+	}*/
 
 }
 void VDMix::setPosition(int x, int y) {
