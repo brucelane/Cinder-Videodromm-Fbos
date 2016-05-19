@@ -4,6 +4,8 @@
 
 // Mix
 #include "VDMix.h"
+// Log
+#include "VDLog.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -22,6 +24,7 @@ public:
 	void draw() override;
 	void cleanup() override;
 private:
+	VDLogRef					mVDLog;
 	VDMixList					mMixes;
 	fs::path					mMixesFilepath;
 };
@@ -29,8 +32,10 @@ private:
 
 void _TBOX_PREFIX_App::setup()
 {
-		// initialize 
+	// initialize 
+	mVDLog = VDLog::create();
 	mMixesFilepath = getAssetPath("") / "mixes.xml";
+	CI_LOG_V("Loading " + mMixesFilepath.string());
 	if (fs::exists(mMixesFilepath)) {
 		// load textures from file if one exists
 		mMixes = VDMix::readSettings(loadFile(mMixesFilepath));
