@@ -82,6 +82,8 @@ namespace VideoDromm {
 	}
 	int VDFbo::loadPixelFragmentShader(string aFilePath) {
 		int rtn = -1;
+		CI_LOG_V("fbo" + mId + ": loadPixelFragmentShader " + aFilePath);
+
 		// reset 
 		//mVDSettings->iFade = false;
 		//mVDSettings->controlValues[22] = 1.0f;
@@ -159,67 +161,7 @@ namespace VideoDromm {
 		}
 		return foundIndex;
 	}
-	/*VDFboList VDFbo::readSettings(const DataSourceRef &source)
-	{
-	XmlTree			doc;
-	VDFboList		mFbolist;
-	//mTextureList = VDTexture::readSettings(source);
-	CI_LOG_V("VDFbo readSettings");
-	// try to load the specified xml file
-	try { doc = XmlTree(source); }
-	catch (...) { return mFbolist; }
 
-	// check if this is a valid file
-	bool isOK = doc.hasChild("fbo");
-	if (isOK) {
-
-	XmlTree fboXml = doc.getChild("fbo");
-	VDFboRef t(new VDFbo());
-	t->fromXml(detailsXml);
-	mFbolist.push_back(t);
-
-	// iterate textures
-	for (XmlTree::ConstIter child = fboXml.begin("texture"); child != fboXml.end(); ++child) {
-	// create fbo
-	//std::string texturetype = child->getAttributeValue<std::string>("texturetype", "unknown");
-	XmlTree detailsXml = child->getChild("details");
-	}
-	}
-	else {
-	// malformed XML
-	CI_LOG_V("malformed XML");
-
-	}
-	return mFbolist;
-	}
-
-	void VDFbo::writeSettings(const VDFboList &VDFbolist, const ci::DataTargetRef &target) {
-
-	// create config document and root <textures>
-	XmlTree			doc;
-	doc.setTag("fbos");
-	doc.setAttribute("version", "1.0");
-
-	//
-	for (unsigned int i = 0; i < VDFbolist.size(); ++i) {
-	// create <texture>
-	XmlTree			fbo;
-	fbo.setTag("texture");
-	fbo.setAttribute("id", i + 1);
-	switch (VDFbolist[i]->mType) {
-	case IMAGE: fbo.setAttribute("texturetype", "image"); break;
-	default: fbo.setAttribute("texturetype", "unknown"); break;
-	}
-	// details specific to texture type
-	fbo.push_back(VDFbolist[i]->toXml());
-
-	// add fbo to doc
-	doc.push_back(fbo);
-	}
-
-	// write file
-	doc.write(target);
-	}*/
 	XmlTree	VDFbo::toXml() const
 	{
 		XmlTree		xml;
@@ -234,7 +176,7 @@ namespace VideoDromm {
 
 	void VDFbo::fromXml(const XmlTree &xml)
 	{
-		string mId = xml.getAttributeValue<string>("id", "");
+		mId = xml.getAttributeValue<string>("id", "");
 		CI_LOG_V("fbo id " + mId);
 		for (XmlTree::ConstIter textureChild = xml.begin("texture"); textureChild != xml.end(); ++textureChild) {
 			CI_LOG_V("fbo texture ");
@@ -259,29 +201,28 @@ namespace VideoDromm {
 					}
 				}
 			}
-			// duplicate from VDTexture.cpp TODO
 			string texturetype = textureChild->getAttributeValue<string>("texturetype", "unknown");
 			CI_LOG_V("fbo texturetype " + texturetype);
-
+			XmlTree detailsXml = textureChild->getChild("details");
 			if (texturetype == "image") {
 				TextureImageRef t(TextureImage::create());
-				t->fromXml(*textureChild);
+				t->fromXml(detailsXml);
 				mTextureList.push_back(t);
 			}
 			else if (texturetype == "imagesequence") {
 				TextureImageSequenceRef t(new TextureImageSequence());
-				t->fromXml(*textureChild);
+				t->fromXml(detailsXml);
 				mTextureList.push_back(t);
 			}
 			else if (texturetype == "movie") {
 				TextureMovieRef t(new TextureMovie());
-				t->fromXml(*textureChild);
+				t->fromXml(detailsXml);
 				mTextureList.push_back(t);
 			}
 			else if (texturetype == "camera") {
 #if (defined(  CINDER_MSW) ) || (defined( CINDER_MAC ))
 				TextureCameraRef t(new TextureCamera());
-				t->fromXml(*textureChild);
+				t->fromXml(detailsXml);
 				mTextureList.push_back(t);
 #else
 				// camera not supported on this platform
@@ -297,12 +238,12 @@ namespace VideoDromm {
 			}
 			else if (texturetype == "shared") {
 				TextureSharedRef t(new TextureShared());
-				t->fromXml(*textureChild);
+				t->fromXml(detailsXml);
 				mTextureList.push_back(t);
 			}
 			else if (texturetype == "audio") {
 				TextureAudioRef t(new TextureAudio());
-				t->fromXml(*textureChild);
+				t->fromXml(detailsXml);
 				mTextureList.push_back(t);
 			}
 			else {
@@ -365,6 +306,7 @@ namespace VideoDromm {
 
 	void VDFbo::loadImageFile(string aFile, unsigned int aTextureIndex) {
 		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
+		CI_LOG_V("fbo" + mId + ": loadImageFile " + aFile + " at textureIndex " + toString(aTextureIndex));
 		mTextureList[aTextureIndex]->loadFromFullPath(aFile);
 	}
 	ci::gl::Texture2dRef VDFbo::getTexture() {
@@ -372,7 +314,7 @@ namespace VideoDromm {
 		gl::ScopedFramebuffer fbScp(mFbo);
 		gl::clear(Color::black());
 		// setup the viewport to match the dimensions of the FBO
-		gl::ScopedViewport scpVp(ivec2(0), mFbo->getSize());
+		gl::ScopedViewport scpVp(ivec2(10), mFbo->getSize());
 		gl::ScopedGlslProg shaderScp(mFboTextureShader);
 		//CI_LOG_V(mFboTextureShader->getLabel());
 		//mShader->bind();

@@ -133,7 +133,7 @@ namespace VideoDromm {
 	void VDMix::writeSettings(const VDMixList &VDMixlist, const ci::DataTargetRef &target) {
 
 		// create config document and root <textures>
-		XmlTree			doc;
+		/* TODO XmlTree			doc;
 		doc.setTag("mixes");
 		doc.setAttribute("version", "1.0");
 
@@ -151,7 +151,7 @@ namespace VideoDromm {
 		}
 
 		// write file
-		doc.write(target);
+		doc.write(target);*/
 	}
 	XmlTree	VDMix::toXml() const
 	{
@@ -160,7 +160,6 @@ namespace VideoDromm {
 		xml.setAttribute("fbopath", mFbosPath);
 		xml.setAttribute("width", mWidth);
 		xml.setAttribute("height", mHeight);
-
 		return xml;
 	}
 
@@ -251,14 +250,14 @@ namespace VideoDromm {
 		// render the left fbo
 		gl::ScopedGlslProg shaderScp(gl::getStockShader(gl::ShaderDef().texture()));
 		gl::ScopedTextureBind tex(mFboList[0]->getTexture());
-		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
+		gl::drawSolidRect(Rectf(0, 40, mWidth, mHeight));
 	}
 	// Render left FBO
 	void VDMix::renderRightFbo()
 	{
 		gl::ScopedFramebuffer fbScp(mRightFbo);
 		// clear out the FBO with red
-		gl::clear(Color(1.0, 0.0f, 0.0f));
+		gl::clear(Color(0.5, 0.0f, 0.0f));
 
 		// setup the viewport to match the dimensions of the FBO
 		gl::ScopedViewport scpVp(ivec2(30), mRightFbo->getSize());
@@ -274,7 +273,7 @@ namespace VideoDromm {
 			gl::ScopedTextureBind tex(mFboList[0]->getTexture());
 
 		}
-		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
+		gl::drawSolidRect(Rectf(40, 0, mWidth, mHeight));
 	}
 	ci::gl::TextureRef VDMix::getRightFboTexture() {
 		return mRightFbo->getColorTexture();

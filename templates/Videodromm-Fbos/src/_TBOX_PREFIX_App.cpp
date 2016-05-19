@@ -47,8 +47,8 @@ void _TBOX_PREFIX_App::setup()
 }
 void _TBOX_PREFIX_App::fileDrop(FileDropEvent event)
 {
-	int index = 1;
-	bool right = true;
+	int index = event.getX()/128;
+	bool right = event.getY() > 256.0f;
 	string ext = "";
 	// use the last of the dropped files
 	fs::path mPath = event.getFile(event.getNumFiles() - 1);
@@ -71,13 +71,13 @@ void _TBOX_PREFIX_App::fileDrop(FileDropEvent event)
 }
 void _TBOX_PREFIX_App::update()
 {
-
+	getWindow()->setTitle(toString(floor(getAverageFps())) + " fps");
 }
 void _TBOX_PREFIX_App::cleanup()
 {
 
 	// save mix settings
-	VDMix::writeSettings(mMixes, writeFile(mMixesFilepath));
+	// TODO xml format changed VDMix::writeSettings(mMixes, writeFile(mMixesFilepath));
 
 	quit();
 }
@@ -102,17 +102,12 @@ void _TBOX_PREFIX_App::draw()
 	gl::draw(mMixes[0]->getFboTexture(1), Rectf(384, 0, 512, 128));
 	gl::draw(mMixes[0]->getTexture(), Rectf(512, 0, 640, 128));
 
-	gl::draw(mMixes[0]->getFboInputTexture(0, 0), Rectf(0, 128, 128, 256));
-	gl::draw(mMixes[0]->getFboInputTexture(0, 1), Rectf(128, 128, 256, 256));
-	gl::draw(mMixes[0]->getFboInputTexture(0, 2), Rectf(256, 128, 384, 256));
-	gl::draw(mMixes[0]->getFboInputTexture(0, 3), Rectf(384, 128, 512, 256));
-	gl::draw(mMixes[0]->getFboInputTexture(0, 4), Rectf(512, 128, 640, 256));
-
-	gl::draw(mMixes[0]->getFboInputTexture(1, 0), Rectf(0, 256, 128, 384));
-	gl::draw(mMixes[0]->getFboInputTexture(1, 1), Rectf(128, 256, 256, 384));
-	gl::draw(mMixes[0]->getFboInputTexture(1, 2), Rectf(256, 256, 384, 384));
-	gl::draw(mMixes[0]->getFboInputTexture(1, 3), Rectf(384, 256, 512, 384));
-	gl::draw(mMixes[0]->getFboInputTexture(1, 4), Rectf(512, 256, 640, 384));
+	for (int i = 0; i < mMixes[0]->getInputTexturesCount(0); i++) {
+		gl::draw(mMixes[0]->getFboInputTexture(0, i), Rectf(i * 128, 128, 128 + i * 128, 256));
+	}
+	for (int i = 0; i < mMixes[0]->getInputTexturesCount(1); i++) {
+		gl::draw(mMixes[0]->getFboInputTexture(1, i), Rectf(i * 128, 256, 128 + i * 128, 384));
+	}
 }
 
 

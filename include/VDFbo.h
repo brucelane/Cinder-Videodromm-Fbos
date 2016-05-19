@@ -46,10 +46,6 @@ namespace VideoDromm
 		void							fromXml(const ci::XmlTree &xml);
 		//!
 		XmlTree							toXml() const;
-		//! read a xml file and pass back a vector of VDFbos
-		//static VDFboList				readSettings(const ci::DataSourceRef &source);
-		//! write a xml file
-		//static void						writeSettings(const VDFboList &VDFbolist, const ci::DataTargetRef &target);
 		// move, rotate, zoom methods
 		void							setPosition(int x, int y);
 		void							setZoom(float aZoom);
@@ -93,5 +89,6 @@ namespace VideoDromm
 		unsigned int					inputTextureIndex;
 		//! Shaders
 		string							mShaderName;
+		string							mId;
 	};
 }
