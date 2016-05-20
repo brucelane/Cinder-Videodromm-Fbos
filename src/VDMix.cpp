@@ -15,14 +15,11 @@ namespace VideoDromm {
 		, mWidth(640)
 		, mHeight(480)
 	{
+		// initialize the fbo list with audio texture
+		init();
 		// Settings
 		mVDSettings = VDSettings::create();
-		/*mFbosFilepath = getAssetPath("") / mFbosPath;
-		mFbos.push_back(VDFbo::create());
-		if (fs::exists(mFbosFilepath)) {
-		// load textures from file if one exists
-		mFbos[mFbos.size() - 1]->readSettings(loadFile(mFbosFilepath));
-		}*/
+
 		if (mName.length() == 0) {
 			mName = mFbosPath;
 		}
@@ -87,6 +84,39 @@ namespace VideoDromm {
 			CI_LOG_V("unable to load mixfbo fragment shader:" + string(e.what()));
 		}
 	}
+	bool VDMix::init() {
+		bool isFirstLaunch = false;
+		if (mFboList.size() == 0) {
+			CI_LOG_V("VDMix::init mFboList");
+			isFirstLaunch = true;
+			VDFboRef t(new VDFbo());
+			// add details child
+			XmlTree			detailsXml;
+			detailsXml.setTag("details");
+			detailsXml.setAttribute("path", "");
+			detailsXml.setAttribute("width", "512");
+			detailsXml.setAttribute("height", "2");
+			detailsXml.setAttribute("topdown", "0");
+			detailsXml.setAttribute("uselinein", "1");
+			// add texture child
+			XmlTree			textureXml;
+			textureXml.setTag("texture");
+			textureXml.setAttribute("id", "0");
+			textureXml.setAttribute("texturetype", "audio");
+			textureXml.push_back(detailsXml);
+			// create fbo xml
+			XmlTree			fboXml;
+			fboXml.setTag("fbo");
+			fboXml.setAttribute("id", "0");
+			fboXml.setAttribute("width", "640");
+			fboXml.setAttribute("height", "480");
+			fboXml.push_back(textureXml);
+			t->fromXml(fboXml);
+			mFboList.push_back(t);
+		}
+		return isFirstLaunch;
+	}
+
 	VDMix::~VDMix(void) {
 
 	}
@@ -137,17 +167,17 @@ namespace VideoDromm {
 		doc.setTag("mixes");
 		doc.setAttribute("version", "1.0");
 
-		// 
+		//
 		for (unsigned int i = 0; i < VDMixlist.size(); ++i) {
-			// create <texture>
-			XmlTree			mix;
-			mix.setTag("fbo");
-			mix.setAttribute("id", i + 1);
-			// details specific to texture type
-			mix.push_back(VDMixlist[i]->toXml());
+		// create <texture>
+		XmlTree			mix;
+		mix.setTag("fbo");
+		mix.setAttribute("id", i + 1);
+		// details specific to texture type
+		mix.push_back(VDMixlist[i]->toXml());
 
-			// add fbo to doc
-			doc.push_back(mix);
+		// add fbo to doc
+		doc.push_back(mix);
 		}
 
 		// write file
@@ -157,7 +187,7 @@ namespace VideoDromm {
 	{
 		XmlTree		xml;
 		xml.setTag("details");
-		xml.setAttribute("fbopath", mFbosPath);
+		// TODO rewrite xml.setAttribute("fbopath", mFbosPath);
 		xml.setAttribute("width", mWidth);
 		xml.setAttribute("height", mHeight);
 		return xml;
@@ -165,16 +195,21 @@ namespace VideoDromm {
 
 	void VDMix::fromXml(const XmlTree &xml)
 	{
-		// retrieve fbos specific to this mix
-		//mFbosPath = xml.getAttributeValue<string>("fbopath", "");
-		// find fbo childs
+		// initialize the fbo list with audio texture
+		bool isFirstLaunch = init();
+		// find fbo childs in xml
 		if (xml.hasChild("fbo")) {
 			CI_LOG_V("VDMix got fbo child ");
 			for (XmlTree::ConstIter fboChild = xml.begin("fbo"); fboChild != xml.end(); ++fboChild) {
 				CI_LOG_V("VDMix create fbo ");
 				VDFboRef t(new VDFbo());
 				t->fromXml(*fboChild);
-				mFboList.push_back(t);
+				if (isFirstLaunch) {
+					mFboList[0] = t;
+				}
+				else {
+					mFboList.push_back(t);
+				}
 			}
 		}
 	}
@@ -270,12 +305,10 @@ namespace VideoDromm {
 		gl::ScopedGlslProg shaderScp(gl::getStockShader(gl::ShaderDef().texture()));
 		if (mFboList.size() > 1) {
 			gl::ScopedTextureBind tex(mFboList[1]->getTexture());
-
 		}
 		else {
 			CI_LOG_W("renderRightFbo: only one fbo, right renders left...");
 			gl::ScopedTextureBind tex(mFboList[0]->getTexture());
-
 		}
 		gl::drawSolidRect(Rectf(40, 0, mWidth, mHeight));
 	}

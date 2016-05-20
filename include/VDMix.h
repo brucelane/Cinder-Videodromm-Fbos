@@ -99,6 +99,8 @@ namespace VideoDromm
 	private:
 		// Settings
 		VDSettingsRef					mVDSettings;
+		// init
+		bool							init();
 		//! Fbo
 		gl::FboRef						mMixFbo, mLeftFbo, mRightFbo;
 		void							renderLeftFbo();
@@ -108,5 +110,6 @@ namespace VideoDromm
 		fs::path						mFbosFilepath;
 		//! Shaders
 		string							mMixShaderName;
+
 	};
 }

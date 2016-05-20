@@ -174,8 +174,7 @@ namespace VideoDromm {
 		return xml;
 	}
 	std::string VDFbo::getLabel() { 
-		mFbo->setLabel("id:" + mId + " tex:" + mTextureList[inputTextureIndex]->getName() + " shader:" + mFboTextureShader->getLabel());
-
+		mFbo->setLabel(mId + " " + mTextureList[inputTextureIndex]->getName() + " " + mFboTextureShader->getLabel());
 		return mFbo->getLabel(); 
 	}
 
