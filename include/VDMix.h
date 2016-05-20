@@ -69,6 +69,8 @@ namespace VideoDromm
 		unsigned int					getInputTexturesCount(unsigned int aFboIndex);
 		unsigned int					getFboCount() { return mFboList.size(); };
 		string							getFboName(unsigned int aFboIndex);
+		string							getFboLabel(unsigned int aFboIndex);
+
 		string							getInputTextureName(unsigned int aFboIndex, unsigned int aTextureIndex);
 		// uniforms
 		void							setCrossfade(float aCrossfade);

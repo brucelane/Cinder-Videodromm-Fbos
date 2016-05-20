@@ -38,6 +38,7 @@ namespace VideoDromm
 		//! returns the type
 		TextureType						getType() { return mType; };
 		std::string						getName();
+		std::string						getLabel();
 		//bool							isFlipH() { return mFlipH; };
 		//bool							isFlipV() { return mFlipV; };
 		int								getTextureWidth();
