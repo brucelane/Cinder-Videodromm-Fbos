@@ -9,7 +9,10 @@
 #include "cinder/Log.h"
 #include "cinder/Timeline.h"
 
+// textures
 #include "VDTexture.h"
+// textures
+#include "VDShaders.h"
 
 #include <atomic>
 #include <vector>
@@ -52,7 +55,6 @@ namespace VideoDromm
 		void							setZoom(float aZoom);
 		// shader
 		int								loadPixelFragmentShader(string aFilePath);
-		int								setGLSLString(string pixelFrag, string name);
 		// textures
 		void							setInputTexture(unsigned int aTextureIndex);
 		ci::gl::Texture2dRef			getInputTexture(unsigned int aIndex);
@@ -84,6 +86,8 @@ namespace VideoDromm
 		// uniforms
 		vec3							iChannelResolution0;
 	private:
+		//! Shaders
+		VDShadersRef					mVDShaders;
 		//! Fbo
 		gl::FboRef						mFbo;
 		VDTextureList					mTextureList;
