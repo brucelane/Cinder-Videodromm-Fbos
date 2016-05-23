@@ -10,9 +10,6 @@ namespace VideoDromm {
 	VDFbo::VDFbo(TextureType aType)
 		: mFilePathOrText("")
 		, mFboName("fbo")
-		/*, mTopDown(true)
-		, mFlipV(false)
-		, mFlipH(true)*/
 		, mWidth(640)
 		, mHeight(480)
 	{

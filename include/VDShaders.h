@@ -23,7 +23,14 @@ namespace VideoDromm
 {
 	// stores the pointer to the VDShaders instance
 	typedef std::shared_ptr<class VDShaders> VDShadersRef;
-
+	struct VDShader
+	{
+		gl::GlslProgRef				shader;
+		string						name;
+		string						text;
+		bool						active;
+		int							microseconds;
+	};
 	class VDShaders {
 	public:
 		VDShaders();
@@ -48,11 +55,6 @@ namespace VideoDromm
 		bool							isValidFrag() { return validFrag; };
 		bool							isValidVert() { return validVert; };
 
-		gl::GlslProgRef					getMixShader() { return mMixShader; };
-		gl::GlslProgRef					getWarpShader() { return mWarpShader; };
-		gl::GlslProgRef					getLiveShader() { return mLiveShader; };
-		void							setupLiveShader();
-		string							loadLiveShader(string frag);
 		//Shada							getShader(int aIndex) { return mFragmentShaders[aIndex]; };
 		int								getCount() { return mFragmentShaders.size(); };
 
@@ -80,15 +82,13 @@ namespace VideoDromm
 
 		bool							validFrag;
 		bool							validVert;
-		bool							liveError;
-		bool							isLiveShaderSetup;
-		fs::path						liveFragFile;
+
 		// new
 		int								mCurrentRenderShader;
 		int								mCurrentPreviewShader;
 		int								mShaderIndex;
 		//! shaders
-		vector<gl::GlslProgRef>			mFragmentShaders;
+		vector<VDShader>				mFragmentShaders;
 
 		string							fileName, previousFileName, currentFileName, mixFileName;
 		string							mError;
@@ -105,12 +105,6 @@ namespace VideoDromm
 
 		// include shader lines
 		std::string						shaderInclude;
-		// mix shader
-		gl::GlslProgRef					mMixShader;
-		// live coding shader
-		gl::GlslProgRef					mLiveShader;
-		//! warp shader
-		gl::GlslProgRef					mWarpShader;
 
 	};
 }
