@@ -120,9 +120,9 @@ namespace VideoDromm {
 	VDMix::~VDMix(void) {
 
 	}
-	int VDMix::loadFboFragmentShader(string aFilePath, bool right)
+	int VDMix::loadFboFragmentShader(string aFilePath)
 	{
-		return mFboList[0]->loadPixelFragmentShader(aFilePath);// TODO right or left
+		return mFboList[0]->loadPixelFragmentShader(aFilePath);
 	}
 
 	VDMixList VDMix::readSettings(const DataSourceRef &source)
