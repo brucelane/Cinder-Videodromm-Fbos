@@ -16,7 +16,7 @@ namespace VideoDromm {
 		, mHeight(480)
 	{
 		// initialize the fbo list with audio texture
-		init();
+		initFboList();
 		// Settings
 		mVDSettings = VDSettings::create();
 
@@ -84,7 +84,7 @@ namespace VideoDromm {
 			CI_LOG_V("unable to load mixfbo fragment shader:" + string(e.what()));
 		}
 	}
-	bool VDMix::init() {
+	bool VDMix::initFboList() {
 		bool isFirstLaunch = false;
 		if (mFboList.size() == 0) {
 			CI_LOG_V("VDMix::init mFboList");
@@ -196,7 +196,7 @@ namespace VideoDromm {
 	void VDMix::fromXml(const XmlTree &xml)
 	{
 		// initialize the fbo list with audio texture
-		bool isFirstLaunch = init();
+		bool isFirstLaunch = initFboList();
 		// find fbo childs in xml
 		if (xml.hasChild("fbo")) {
 			CI_LOG_V("VDMix got fbo child ");
@@ -204,12 +204,13 @@ namespace VideoDromm {
 				CI_LOG_V("VDMix create fbo ");
 				VDFboRef t(new VDFbo());
 				t->fromXml(*fboChild);
+				/* TODO 
 				if (isFirstLaunch) {
 					mFboList[0] = t;
 				}
-				else {
+				else {*/
 					mFboList.push_back(t);
-				}
+				//}
 			}
 		}
 	}

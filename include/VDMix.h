@@ -74,6 +74,8 @@ namespace VideoDromm
 		string							getInputTextureName(unsigned int aFboIndex, unsigned int aTextureIndex);
 		// uniforms
 		void							setCrossfade(float aCrossfade);
+		// audio spectrum
+		//float*							getSmallSpectrum() { return mFboList[0]->getSmallSpectrum(); };
 	protected:
 		std::string						mName;
 		bool							mFlipV;
@@ -100,7 +102,7 @@ namespace VideoDromm
 		// Settings
 		VDSettingsRef					mVDSettings;
 		// init
-		bool							init();
+		bool							initFboList();
 		//! Fbo
 		gl::FboRef						mMixFbo, mLeftFbo, mRightFbo;
 		void							renderLeftFbo();

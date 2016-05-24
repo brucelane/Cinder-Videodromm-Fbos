@@ -182,6 +182,7 @@ namespace VideoDromm {
 				TextureAudioRef t(new TextureAudio());
 				t->fromXml(detailsXml);
 				mTextureList.push_back(t);
+				
 			}
 			else {
 				// unknown texture type
@@ -197,6 +198,7 @@ namespace VideoDromm {
 			}
 		}
 	}
+
 	void VDFbo::setPosition(int x, int y) {
 		mPosX = ((float)x / (float)mWidth) - 0.5;
 		mPosY = ((float)y / (float)mHeight) - 0.5;

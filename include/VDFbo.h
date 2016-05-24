@@ -63,6 +63,8 @@ namespace VideoDromm
 		string							getInputTextureName(unsigned int aTextureIndex);
 		ci::gl::Texture2dRef			getTexture();
 		void							loadImageFile(string aFile, unsigned int aTextureIndex);
+		//float*							getSmallSpectrum();
+
 	protected:
 		std::string						mFboName;
 		//bool							mFlipV;
@@ -97,5 +99,6 @@ namespace VideoDromm
 		string							mShaderName;
 		string							mFragmentShaderText;
 		string							mId;
+		
 	};
 }
