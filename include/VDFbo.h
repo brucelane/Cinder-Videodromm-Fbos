@@ -54,7 +54,8 @@ namespace VideoDromm
 		void							setPosition(int x, int y);
 		void							setZoom(float aZoom);
 		// shader
-		int								loadPixelFragmentShader(string aFilePath);
+		int								loadFragmentShader(string aFilePath);
+		string							getFragmentShaderText(unsigned int aFboIndex);
 		// textures
 		void							setInputTexture(unsigned int aTextureIndex);
 		ci::gl::Texture2dRef			getInputTexture(unsigned int aIndex);
@@ -94,6 +95,7 @@ namespace VideoDromm
 		unsigned int					inputTextureIndex;
 		//! Shaders
 		string							mShaderName;
+		string							mFragmentShaderText;
 		string							mId;
 	};
 }

@@ -120,13 +120,13 @@ namespace VideoDromm {
 	VDMix::~VDMix(void) {
 
 	}
-	int VDMix::loadFboFragmentShader(string aFilePath)
-	{
-		return mFboList[0]->loadPixelFragmentShader(aFilePath);
+	int VDMix::loadFboFragmentShader(string aFilePath) {
+		return mFboList[0]->loadFragmentShader(aFilePath);
 	}
-
-	VDMixList VDMix::readSettings(const DataSourceRef &source)
-	{
+	string VDMix::getFboFragmentShaderText(unsigned int aFboIndex) {
+		return mFboList[0]->getFragmentShaderText(aFboIndex);
+	}
+	VDMixList VDMix::readSettings(const DataSourceRef &source) {
 		XmlTree			doc;
 		VDMixList	VDMixlist;
 

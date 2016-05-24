@@ -80,16 +80,21 @@ namespace VideoDromm {
 	VDFbo::~VDFbo(void) {
 
 	}
-	int VDFbo::loadPixelFragmentShader(string aFilePath) {
+	int VDFbo::loadFragmentShader(string aFilePath) {
 		int rtn = -1;
 		CI_LOG_V("fbo" + mId + ": loadPixelFragmentShader " + aFilePath);
 		//rtn = mVDShaders->loadFboPixelFragmentShader(aFilePath);
-		rtn = 0;
-		string pixelShader = mVDShaders->loadFboPixelFragmentShader(aFilePath);
-		if (pixelShader.length() > 0) mFboTextureShader = gl::GlslProg::create(mPassthruVextexShaderString, pixelShader);
-
+		mFragmentShaderText = mVDShaders->loadFboPixelFragmentShader(aFilePath);
+		if (mFragmentShaderText.length() > 0) {
+			mFboTextureShader = gl::GlslProg::create(mPassthruVextexShaderString, mFragmentShaderText);
+			rtn = 0;
+		}
 		return rtn;
 	}
+	string VDFbo::getFragmentShaderText(unsigned int aFboIndex) {
+		return mFragmentShaderText;
+	}
+
 	XmlTree	VDFbo::toXml() const
 	{
 		XmlTree		xml;
@@ -124,7 +129,7 @@ namespace VideoDromm {
 					fs::path fr = getAssetPath("") / mGlslPath;// TODO / mVDSettings->mAssetsPath
 					if (fs::exists(fr)) {
 						try {
-							loadPixelFragmentShader(fr.string());
+							loadFragmentShader(fr.string());
 							CI_LOG_V("successfully loaded " + mGlslPath);
 						}
 						catch (Exception &exc) {

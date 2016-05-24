@@ -138,18 +138,15 @@ void VDShaders::removePixelFragmentShaderAtIndex(int index)
 	mFragmentShaders[index].name = "passthru";
 	mFragmentShaders[index].active = false;*/
 }
-string VDShaders::loadFboPixelFragmentShader(string aFilePath)
-{
+string VDShaders::loadFboPixelFragmentShader(string aFilePath) {
 	string rtn = "";
-	try
-	{
+	try {
 		fs::path fr = aFilePath;
 		string name = "unknown";
 		string mFile = fr.string();
 		if (mFile.find_last_of("\\") != std::string::npos) name = mFile.substr(mFile.find_last_of("\\") + 1);
 		mFragFileName = name;
-		if (fs::exists(fr))
-		{
+		if (fs::exists(fr)) {
 			validFrag = false;
 			std::string fs = shaderInclude + loadString(loadFile(aFilePath));
 			VDShader newShader;
@@ -159,19 +156,15 @@ string VDShaders::loadFboPixelFragmentShader(string aFilePath)
 			newShader.active = true;
 			mFragmentShaders.push_back(newShader);
 			rtn = fs;
-		}
-		else
-		{
+		} else {
 			CI_LOG_V(mFragFile + " does not exist");
 		}
 	}
-	catch (gl::GlslProgCompileExc &exc)
-	{
+	catch (gl::GlslProgCompileExc &exc) {
 		mError = string(exc.what());
 		CI_LOG_V(aFilePath + " unable to load/compile shader err:" + mError);
 	}
-	catch (const std::exception &e)
-	{
+	catch (const std::exception &e) {
 		mError = string(e.what());
 		CI_LOG_V(aFilePath + " unable to load shader err:" + mError);
 	}
