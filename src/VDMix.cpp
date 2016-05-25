@@ -99,6 +99,7 @@ namespace VideoDromm {
 			detailsXml.setAttribute("height", "2");
 			detailsXml.setAttribute("topdown", "0");
 			detailsXml.setAttribute("uselinein", "1");
+			detailsXml.setAttribute("shadername", "0.glsl");
 			// add texture child
 			XmlTree			textureXml;
 			textureXml.setTag("texture");
@@ -205,8 +206,8 @@ namespace VideoDromm {
 				CI_LOG_V("VDMix create fbo ");
 				VDFboRef t(new VDFbo(mVDSettings, mVDAnimation));
 				t->fromXml(*fboChild);
-				/* TODO 
-				if (isFirstLaunch) {
+				/*if (isFirstLaunch) {
+				// not working...
 					mFboList[0] = t;
 				}
 				else {*/
