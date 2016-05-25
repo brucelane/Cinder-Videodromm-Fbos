@@ -4,8 +4,14 @@
 
 // Mix
 #include "VDMix.h"
+// Settings
+#include "VDSettings.h"
+// Session
+#include "VDSession.h"
 // Log
 #include "VDLog.h"
+// Animation
+#include "VDAnimation.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -24,7 +30,15 @@ public:
 	void draw() override;
 	void cleanup() override;
 private:
+	// Settings
+	VDSettingsRef				mVDSettings;
+	// Session
+	VDSessionRef				mVDSession;
+	// Log
 	VDLogRef					mVDLog;
+	// Animation
+	VDAnimationRef				mVDAnimation;
+
 	VDMixList					mMixes;
 	fs::path					mMixesFilepath;
 };
@@ -34,15 +48,23 @@ void _TBOX_PREFIX_App::setup()
 {
 	// initialize 
 	mVDLog = VDLog::create();
+	// Settings
+	mVDSettings = VDSettings::create();
+
+	// Session
+	mVDSession = VDSession::create(mVDSettings);
+	// Animation
+	mVDAnimation = VDAnimation::create(mVDSettings, mVDSession);
+
 	mMixesFilepath = getAssetPath("") / "mixes.xml";
 	CI_LOG_V("Loading " + mMixesFilepath.string());
 	if (fs::exists(mMixesFilepath)) {
 		// load textures from file if one exists
-		mMixes = VDMix::readSettings(loadFile(mMixesFilepath));
+		mMixes = VDMix::readSettings(mVDSettings, mVDAnimation, loadFile(mMixesFilepath));
 	}
 	else {
 		// otherwise create a texture from scratch
-		mMixes.push_back(VDMix::create());
+		mMixes.push_back(VDMix::create(mVDSettings, mVDAnimation));
 	}
 }
 void _TBOX_PREFIX_App::fileDrop(FileDropEvent event)
@@ -102,11 +124,11 @@ void _TBOX_PREFIX_App::draw()
 	gl::draw(mMixes[0]->getFboTexture(1), Rectf(384, 0, 512, 128));
 	gl::draw(mMixes[0]->getTexture(), Rectf(512, 0, 640, 128));
 
-	for (int i = 0; i < mMixes[0]->getInputTexturesCount(0); i++) {
-		gl::draw(mMixes[0]->getFboInputTexture(0, i), Rectf(i * 128, 128, 128 + i * 128, 256));
-	}
-	for (int i = 0; i < mMixes[0]->getInputTexturesCount(1); i++) {
-		gl::draw(mMixes[0]->getFboInputTexture(1, i), Rectf(i * 128, 256, 128 + i * 128, 384));
+	for (int f = 0; f < mMixes[0]->getFboCount(); f++) {
+		for (int i = 0; i < mMixes[0]->getInputTexturesCount(f); i++) {
+			gl::draw(mMixes[0]->getFboInputTexture(f, i), Rectf(i * 128, 128 + (f*128), 128 + i * 128, 256 + (f*128)));
+		}
+		
 	}
 }
 
