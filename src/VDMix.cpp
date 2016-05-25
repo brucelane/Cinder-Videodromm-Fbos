@@ -7,7 +7,7 @@ using namespace ci;
 using namespace ci::app;
 
 namespace VideoDromm {
-	VDMix::VDMix()
+	VDMix::VDMix(VDSettingsRef aVDSettings, VDAnimationRef aVDAnimation)
 		: mFbosPath("fbos.xml")
 		, mName("")
 		, mFlipV(false)
@@ -15,11 +15,12 @@ namespace VideoDromm {
 		, mWidth(640)
 		, mHeight(480)
 	{
+		// Settings
+		mVDSettings = aVDSettings;
+		// Animation
+		mVDAnimation = aVDAnimation;
 		// initialize the fbo list with audio texture
 		initFboList();
-		// Settings
-		mVDSettings = VDSettings::create();
-
 		if (mName.length() == 0) {
 			mName = mFbosPath;
 		}
@@ -89,7 +90,7 @@ namespace VideoDromm {
 		if (mFboList.size() == 0) {
 			CI_LOG_V("VDMix::init mFboList");
 			isFirstLaunch = true;
-			VDFboRef t(new VDFbo());
+			VDFboRef t(new VDFbo(mVDSettings, mVDAnimation));
 			// add details child
 			XmlTree			detailsXml;
 			detailsXml.setTag("details");
@@ -126,7 +127,7 @@ namespace VideoDromm {
 	string VDMix::getFboFragmentShaderText(unsigned int aFboIndex) {
 		return mFboList[0]->getFragmentShaderText(aFboIndex);
 	}
-	VDMixList VDMix::readSettings(const DataSourceRef &source) {
+	VDMixList VDMix::readSettings(VDSettingsRef aVDSettings, VDAnimationRef aVDAnimation, const DataSourceRef &source) {
 		XmlTree			doc;
 		VDMixList	VDMixlist;
 
@@ -151,7 +152,7 @@ namespace VideoDromm {
 			for (XmlTree::ConstIter child = mixXml.begin("mix"); child != mixXml.end(); ++child) {
 				// add the mix to the list
 				CI_LOG_V("Add Mix " + child->getValue());
-				VDMixRef t(new VDMix());
+				VDMixRef t(new VDMix(aVDSettings, aVDAnimation));
 				t->fromXml(*child);
 				VDMixlist.push_back(t);
 			}
@@ -202,7 +203,7 @@ namespace VideoDromm {
 			CI_LOG_V("VDMix got fbo child ");
 			for (XmlTree::ConstIter fboChild = xml.begin("fbo"); fboChild != xml.end(); ++fboChild) {
 				CI_LOG_V("VDMix create fbo ");
-				VDFboRef t(new VDFbo());
+				VDFboRef t(new VDFbo(mVDSettings, mVDAnimation));
 				t->fromXml(*fboChild);
 				/* TODO 
 				if (isFirstLaunch) {
@@ -334,7 +335,7 @@ namespace VideoDromm {
 		return mFboList[aFboIndex]->getInputTexture(aFboInputTextureIndex);
 	}
 	void VDMix::setCrossfade(float aCrossfade) {
-		mVDSettings->controlValues[21] = aCrossfade;
+		mVDAnimation->controlValues[21] = aCrossfade;
 	}
 	ci::gl::TextureRef VDMix::getTexture() {
 		renderLeftFbo();
@@ -356,49 +357,49 @@ namespace VideoDromm {
 		mMixShader->uniform("iChannel0", 0);
 		mMixShader->uniform("iChannel1", 1);
 		mMixShader->uniform("iAudio0", 0);
-		mMixShader->uniform("iFreq0", mVDSettings->iFreqs[0]);
-		mMixShader->uniform("iFreq1", mVDSettings->iFreqs[1]);
-		mMixShader->uniform("iFreq2", mVDSettings->iFreqs[2]);
-		mMixShader->uniform("iFreq3", mVDSettings->iFreqs[3]);
+		mMixShader->uniform("iFreq0", mVDAnimation->iFreqs[0]);
+		mMixShader->uniform("iFreq1", mVDAnimation->iFreqs[1]);
+		mMixShader->uniform("iFreq2", mVDAnimation->iFreqs[2]);
+		mMixShader->uniform("iFreq3", mVDAnimation->iFreqs[3]);
 		mMixShader->uniform("iChannelTime", mVDSettings->iChannelTime, 4);
-		mMixShader->uniform("iColor", vec3(mVDSettings->controlValues[1], mVDSettings->controlValues[2], mVDSettings->controlValues[3]));// mVDSettings->iColor);
-		mMixShader->uniform("iBackgroundColor", vec3(mVDSettings->controlValues[5], mVDSettings->controlValues[6], mVDSettings->controlValues[7]));// mVDSettings->iBackgroundColor);
-		mMixShader->uniform("iSteps", (int)mVDSettings->controlValues[20]);
-		mMixShader->uniform("iRatio", mVDSettings->controlValues[11]);//check if needed: +1;//mVDSettings->iRatio); 
+		mMixShader->uniform("iColor", vec3(mVDAnimation->controlValues[1], mVDAnimation->controlValues[2], mVDAnimation->controlValues[3]));// mVDSettings->iColor);
+		mMixShader->uniform("iBackgroundColor", vec3(mVDAnimation->controlValues[5], mVDAnimation->controlValues[6], mVDAnimation->controlValues[7]));// mVDSettings->iBackgroundColor);
+		mMixShader->uniform("iSteps", (int)mVDAnimation->controlValues[20]);
+		mMixShader->uniform("iRatio", mVDAnimation->controlValues[11]);//check if needed: +1;//mVDSettings->iRatio); 
 		mMixShader->uniform("width", 1);
 		mMixShader->uniform("height", 1);
 		mMixShader->uniform("iRenderXY", vec2(0.0, 0.0));
-		mMixShader->uniform("iAlpha", mVDSettings->controlValues[4]);
+		mMixShader->uniform("iAlpha", mVDAnimation->controlValues[4]);
 		mMixShader->uniform("iBlendmode", mVDSettings->iBlendMode);
-		mMixShader->uniform("iRotationSpeed", mVDSettings->controlValues[19]);
-		mMixShader->uniform("iCrossfade", mVDSettings->controlValues[21]);
-		mMixShader->uniform("iPixelate", mVDSettings->controlValues[15]);
-		mMixShader->uniform("iExposure", mVDSettings->controlValues[14]);
+		mMixShader->uniform("iRotationSpeed", mVDAnimation->controlValues[19]);
+		mMixShader->uniform("iCrossfade", mVDAnimation->controlValues[21]);
+		mMixShader->uniform("iPixelate", mVDAnimation->controlValues[15]);
+		mMixShader->uniform("iExposure", mVDAnimation->controlValues[14]);
 		mMixShader->uniform("iFade", (int)mVDSettings->iFade);
-		mMixShader->uniform("iToggle", (int)mVDSettings->controlValues[46]);
+		mMixShader->uniform("iToggle", (int)mVDAnimation->controlValues[46]);
 		mMixShader->uniform("iLight", (int)mVDSettings->iLight);
 		mMixShader->uniform("iLightAuto", (int)mVDSettings->iLightAuto);
 		mMixShader->uniform("iGreyScale", (int)mVDSettings->iGreyScale);
 		mMixShader->uniform("iTransition", mVDSettings->iTransition);
 		mMixShader->uniform("iAnim", mVDSettings->iAnim.value());
 		mMixShader->uniform("iRepeat", (int)mVDSettings->iRepeat);
-		mMixShader->uniform("iVignette", (int)mVDSettings->controlValues[47]);
-		mMixShader->uniform("iInvert", (int)mVDSettings->controlValues[48]);
+		mMixShader->uniform("iVignette", (int)mVDAnimation->controlValues[47]);
+		mMixShader->uniform("iInvert", (int)mVDAnimation->controlValues[48]);
 		mMixShader->uniform("iDebug", (int)mVDSettings->iDebug);
 		mMixShader->uniform("iShowFps", (int)mVDSettings->iShowFps);
 		mMixShader->uniform("iFps", mVDSettings->iFps);
 		// TODO mMixShader->uniform("iDeltaTime", mVDAnimation->iDeltaTime);
 		// TODO mMixShader->uniform("iTempoTime", mVDAnimation->iTempoTime);
 		mMixShader->uniform("iTempoTime", 1.0f);
-		mMixShader->uniform("iGlitch", (int)mVDSettings->controlValues[45]);
+		mMixShader->uniform("iGlitch", (int)mVDAnimation->controlValues[45]);
 		mMixShader->uniform("iBeat", mVDSettings->iBeat);
 		mMixShader->uniform("iSeed", mVDSettings->iSeed);
 		mMixShader->uniform("iFlipH", mFlipH);
 		mMixShader->uniform("iFlipV", mFlipV);
 
 
-		mMixShader->uniform("iTrixels", mVDSettings->controlValues[16]);
-		mMixShader->uniform("iGridSize", mVDSettings->controlValues[17]);
+		mMixShader->uniform("iTrixels", mVDAnimation->controlValues[16]);
+		mMixShader->uniform("iGridSize", mVDAnimation->controlValues[17]);
 		mMixShader->uniform("iRedMultiplier", mVDSettings->iRedMultiplier);
 		mMixShader->uniform("iGreenMultiplier", mVDSettings->iGreenMultiplier);
 		mMixShader->uniform("iBlueMultiplier", mVDSettings->iBlueMultiplier);

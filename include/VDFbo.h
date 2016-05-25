@@ -9,6 +9,10 @@
 #include "cinder/Log.h"
 #include "cinder/Timeline.h"
 
+// Settings
+#include "VDSettings.h"
+// Animation
+#include "VDAnimation.h"
 // textures
 #include "VDTexture.h"
 // textures
@@ -30,9 +34,9 @@ namespace VideoDromm
 
 	class VDFbo : public VDTexture{
 	public:
-		VDFbo(TextureType aType = UNKNOWN);
+		VDFbo(VDSettingsRef aVDSettings, VDAnimationRef aVDAnimation);
 		~VDFbo(void);
-		static VDFboRef create() { return std::make_shared<VDFbo>(); }
+		static VDFboRef create(VDSettingsRef aVDSettings, VDAnimationRef aVDAnimation) { return std::make_shared<VDFbo>(aVDSettings, aVDAnimation); }
 		//! returns a shared pointer to this fbo
 		VDFboRef						getPtr() { return std::static_pointer_cast<VDFbo>(shared_from_this()); }
 		ci::ivec2						getSize();
@@ -63,7 +67,6 @@ namespace VideoDromm
 		string							getInputTextureName(unsigned int aTextureIndex);
 		ci::gl::Texture2dRef			getTexture();
 		void							loadImageFile(string aFile, unsigned int aTextureIndex);
-		//float*							getSmallSpectrum();
 
 	protected:
 		std::string						mFboName;
@@ -89,6 +92,10 @@ namespace VideoDromm
 		// uniforms
 		vec3							iChannelResolution0;
 	private:
+		// Animation
+		VDAnimationRef					mVDAnimation;
+		// Settings
+		VDSettingsRef					mVDSettings;
 		//! Shaders
 		VDShadersRef					mVDShaders;
 		//! Fbo

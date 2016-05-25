@@ -7,14 +7,16 @@ using namespace ci;
 using namespace ci::app;
 
 namespace VideoDromm {
-	VDFbo::VDFbo(TextureType aType)
+	VDFbo::VDFbo(VDSettingsRef aVDSettings, VDAnimationRef aVDAnimation)
 		: mFilePathOrText("")
 		, mFboName("fbo")
 		, mWidth(640)
 		, mHeight(480)
 	{
 		CI_LOG_V("VDFbo constructor");
-		mType = aType;
+		mVDSettings = aVDSettings;
+		mVDAnimation = aVDAnimation;
+		mType = UNKNOWN;
 		inputTextureIndex = 0;
 		mPosX = mPosY = 0.0f;
 		mZoom = 1.0f;
@@ -106,9 +108,9 @@ namespace VideoDromm {
 
 		return xml;
 	}
-	std::string VDFbo::getLabel() { 
+	std::string VDFbo::getLabel() {
 		mFbo->setLabel(mId + " " + mTextureList[inputTextureIndex]->getName() + " " + mFboTextureShader->getLabel());
-		return mFbo->getLabel(); 
+		return mFbo->getLabel();
 	}
 
 	void VDFbo::fromXml(const XmlTree &xml)
@@ -179,10 +181,10 @@ namespace VideoDromm {
 				mTextureList.push_back(t);
 			}
 			else if (texturetype == "audio") {
-				TextureAudioRef t(new TextureAudio());
+				TextureAudioRef t(new TextureAudio(mVDAnimation));
 				t->fromXml(detailsXml);
 				mTextureList.push_back(t);
-				
+
 			}
 			else {
 				// unknown texture type
@@ -257,7 +259,7 @@ namespace VideoDromm {
 		gl::ScopedGlslProg shaderScp(mFboTextureShader);
 		//CI_LOG_V(mFboTextureShader->getLabel());
 		//mShader->bind();
-		mFboTextureShader->uniform("iGlobalTime", (float)getElapsedSeconds()); //TODO
+		mFboTextureShader->uniform("iGlobalTime", mVDSettings->iGlobalTime); //TODO
 		mFboTextureShader->uniform("iResolution", vec3(mWidth, mHeight, 1.0));
 		mFboTextureShader->uniform("iChannelResolution[0]", iChannelResolution0);
 		mFboTextureShader->uniform("iChannel0", 0);

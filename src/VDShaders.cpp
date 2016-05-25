@@ -129,7 +129,7 @@ string VDShaders::getNewFragFileName(string aFilePath)
 
 void VDShaders::renderPreviewShader()
 {
-	//mVDSettings->controlValues[18] = mVDSettings->controlValues[21];
+	//mVDAnimation->controlValues[18] = mVDAnimation->controlValues[21];
 	mFragmentShaders[mCurrentRenderShader] = mFragmentShaders[mCurrentPreviewShader];
 }
 void VDShaders::removePixelFragmentShaderAtIndex(int index)

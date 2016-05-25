@@ -11,6 +11,8 @@
 
 // Settings
 #include "VDSettings.h"
+// Animation
+#include "VDAnimation.h"
 // Fbos
 #include "VDFbo.h"
 
@@ -30,9 +32,9 @@ namespace VideoDromm
 
 	class VDMix : public std::enable_shared_from_this < VDMix > {
 	public:
-		VDMix();
+		VDMix(VDSettingsRef aVDSettings, VDAnimationRef aVDAnimation);
 		~VDMix(void);
-		static VDMixRef create() { return std::make_shared<VDMix>(); }
+		static VDMixRef create(VDSettingsRef aVDSettings, VDAnimationRef aVDAnimation) { return std::make_shared<VDMix>(aVDSettings, aVDAnimation); }
 		//! returns a shared pointer to this fbo
 		VDMixRef						getPtr() { return shared_from_this(); }
 		ci::ivec2						getSize();
@@ -50,7 +52,7 @@ namespace VideoDromm
 		//!
 		XmlTree							toXml() const;
 		//! read a xml file and pass back a vector of VDMixs
-		static VDMixList				readSettings(const ci::DataSourceRef &source);
+		static VDMixList				readSettings(VDSettingsRef aVDSettings, VDAnimationRef aVDAnimation, const ci::DataSourceRef &source);
 		//! write a xml file
 		static void						writeSettings(const VDMixList &VDMixlist, const ci::DataTargetRef &target);
 		// move, rotate, zoom methods
@@ -99,6 +101,8 @@ namespace VideoDromm
 		// uniforms
 		vec3							iChannelResolution0;
 	private:
+		// Animation
+		VDAnimationRef					mVDAnimation;
 		// Settings
 		VDSettingsRef					mVDSettings;
 		// init
