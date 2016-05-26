@@ -47,6 +47,7 @@ namespace VideoDromm
 		int								getTextureHeight();
 		// textures
 		void							loadImageFile(string aFile, unsigned int aFboIndex, unsigned int aTextureIndex, bool right);
+		void							loadAudioFile(string aFile);
 		//!
 		void							fromXml(const ci::XmlTree &xml);
 		//!

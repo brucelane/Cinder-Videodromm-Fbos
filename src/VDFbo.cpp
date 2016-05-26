@@ -244,11 +244,15 @@ namespace VideoDromm {
 		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
 		return mTextureList[aTextureIndex]->getName();
 	}
-
 	void VDFbo::loadImageFile(string aFile, unsigned int aTextureIndex) {
 		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
 		CI_LOG_V("fbo" + mId + ": loadImageFile " + aFile + " at textureIndex " + toString(aTextureIndex));
 		mTextureList[aTextureIndex]->loadFromFullPath(aFile);
+	}
+
+	void VDFbo::loadAudioFile(string aFile) {
+		CI_LOG_V("fbo" + mId + ": loadAudioFile " + aFile + " at textureIndex 0");
+		mTextureList[0]->loadFromFullPath(aFile);
 	}
 	ci::gl::Texture2dRef VDFbo::getTexture() {
 		iChannelResolution0 = vec3(mPosX, mPosY, 0.5);

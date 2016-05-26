@@ -67,6 +67,7 @@ namespace VideoDromm
 		string							getInputTextureName(unsigned int aTextureIndex);
 		ci::gl::Texture2dRef			getTexture();
 		void							loadImageFile(string aFile, unsigned int aTextureIndex);
+		void							loadAudioFile(string aFile);
 
 	protected:
 		std::string						mFboName;

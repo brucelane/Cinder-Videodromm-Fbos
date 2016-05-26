@@ -327,6 +327,10 @@ namespace VideoDromm {
 		CI_LOG_V("fbolist" + toString(aFboIndex) + ": loadImageFile " + aFile + " at textureIndex " + toString(aTextureIndex));
 		mFboList[aFboIndex]->loadImageFile(aFile, aTextureIndex);
 	}
+	void VDMix::loadAudioFile(string aFile) {
+		// fbo at index 0 is initialized with the audio texture 
+		mFboList[0]->loadAudioFile(aFile);
+	}
 
 	ci::gl::Texture2dRef VDMix::getFboTexture(unsigned int aFboIndex) {
 		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
