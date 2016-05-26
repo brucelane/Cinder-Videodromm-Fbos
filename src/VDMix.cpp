@@ -122,8 +122,9 @@ namespace VideoDromm {
 	VDMix::~VDMix(void) {
 
 	}
-	int VDMix::loadFboFragmentShader(string aFilePath) {
-		return mFboList[0]->loadFragmentShader(aFilePath);
+	int VDMix::loadFboFragmentShader(string aFilePath, unsigned int aFboIndex) {
+		if (aFboIndex > mFboList.size() - 1) aFboIndex = 0;
+		return mFboList[aFboIndex]->loadFragmentShader(aFilePath);
 	}
 	string VDMix::getFboFragmentShaderText(unsigned int aFboIndex) {
 		return mFboList[0]->getFragmentShaderText(aFboIndex);
@@ -335,6 +336,12 @@ namespace VideoDromm {
 		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
 		return mFboList[aFboIndex]->getInputTexture(aFboInputTextureIndex);
 	}
+	void VDMix::setFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex) {
+		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+		if (aFboInputTextureIndex > mFboList[aFboIndex]->getInputTexturesCount() - 1) aFboInputTextureIndex = mFboList[aFboIndex]->getInputTexturesCount() - 1;
+		mFboList[aFboIndex]->setInputTexture(aFboInputTextureIndex);
+	}
+
 	void VDMix::setCrossfade(float aCrossfade) {
 		mVDAnimation->controlValues[21] = aCrossfade;
 	}

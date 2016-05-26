@@ -59,13 +59,14 @@ namespace VideoDromm
 		void							setPosition(int x, int y);
 		void							setZoom(float aZoom);
 		// shader
-		int								loadFboFragmentShader(string aFilePath);
+		int								loadFboFragmentShader(string aFilePath, unsigned int aFboIndex = 0);
 		// fbos
 		ci::gl::Texture2dRef			getTexture();
 		ci::gl::Texture2dRef			getRightFboTexture();
 		ci::gl::Texture2dRef			getLeftFboTexture();
 		ci::gl::Texture2dRef			getFboTexture(unsigned int aFboIndex);
 		ci::gl::Texture2dRef			getFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex);
+		void							setFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex);
 		int								getFboTextureWidth(unsigned int aFboIndex);
 		int								getFboTextureHeight(unsigned int aFboIndex);
 		unsigned int					getInputTexturesCount(unsigned int aFboIndex);
