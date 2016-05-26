@@ -68,6 +68,15 @@ namespace VideoDromm
 		ci::gl::Texture2dRef			getFboTexture(unsigned int aFboIndex);
 		ci::gl::Texture2dRef			getFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex);
 		void							setFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex);
+		int								getFboInputTextureXLeft(unsigned int aFboIndex, unsigned int aFboInputTextureIndex);
+		void							setFboInputTextureXLeft(unsigned int aFboIndex, unsigned int aFboInputTextureIndex, int aXLeft);
+		int								getFboInputTextureYTop(unsigned int aFboIndex, unsigned int aFboInputTextureIndex);
+		void							setFboInputTextureYTop(unsigned int aFboIndex, unsigned int aFboInputTextureIndex, int aYTop);
+		int								getFboInputTextureXRight(unsigned int aFboIndex, unsigned int aFboInputTextureIndex);
+		void							setFboInputTextureXRight(unsigned int aFboIndex, unsigned int aFboInputTextureIndex, int aXRight);
+		int								getFboInputTextureYBottom(unsigned int aFboIndex, unsigned int aFboInputTextureIndex);
+		void							setFboInputTextureYBottom(unsigned int aFboIndex, unsigned int aFboInputTextureIndex, int aYBottom);
+
 		int								getFboTextureWidth(unsigned int aFboIndex);
 		int								getFboTextureHeight(unsigned int aFboIndex);
 		unsigned int					getInputTexturesCount(unsigned int aFboIndex);

@@ -345,6 +345,34 @@ namespace VideoDromm {
 		if (aFboInputTextureIndex > mFboList[aFboIndex]->getInputTexturesCount() - 1) aFboInputTextureIndex = mFboList[aFboIndex]->getInputTexturesCount() - 1;
 		mFboList[aFboIndex]->setInputTexture(aFboInputTextureIndex);
 	}
+	int VDMix::getFboInputTextureXLeft(unsigned int aFboIndex, unsigned int aFboInputTextureIndex) {
+		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+		return mFboList[aFboIndex]->getInputTextureXLeft(aFboInputTextureIndex);
+	}
+	void VDMix::setFboInputTextureXLeft(unsigned int aFboIndex, unsigned int aFboInputTextureIndex, int aXLeft) {
+		mFboList[aFboIndex]->setInputTextureXLeft(aFboInputTextureIndex, aXLeft);
+	}
+	int VDMix::getFboInputTextureYTop(unsigned int aFboIndex, unsigned int aFboInputTextureIndex) {
+		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+		return mFboList[aFboIndex]->getInputTextureYTop(aFboInputTextureIndex);
+	}
+	void VDMix::setFboInputTextureYTop(unsigned int aFboIndex, unsigned int aFboInputTextureIndex, int aYTop) {
+		mFboList[aFboIndex]->setInputTextureYTop(aFboInputTextureIndex, aYTop);
+	}
+	int VDMix::getFboInputTextureXRight(unsigned int aFboIndex, unsigned int aFboInputTextureIndex) {
+		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+		return mFboList[aFboIndex]->getInputTextureXRight(aFboInputTextureIndex);
+	}
+	void VDMix::setFboInputTextureXRight(unsigned int aFboIndex, unsigned int aFboInputTextureIndex, int aXRight) {
+		mFboList[aFboIndex]->setInputTextureXRight(aFboInputTextureIndex, aXRight);
+	}
+	int VDMix::getFboInputTextureYBottom(unsigned int aFboIndex, unsigned int aFboInputTextureIndex) {
+		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+		return mFboList[aFboIndex]->getInputTextureYBottom(aFboInputTextureIndex);
+	}
+	void VDMix::setFboInputTextureYBottom(unsigned int aFboIndex, unsigned int aFboInputTextureIndex, int aYBottom) {
+		mFboList[aFboIndex]->setInputTextureYBottom(aFboInputTextureIndex, aYBottom);
+	}
 
 	void VDMix::setCrossfade(float aCrossfade) {
 		mVDAnimation->controlValues[21] = aCrossfade;

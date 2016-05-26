@@ -240,6 +240,35 @@ namespace VideoDromm {
 		if (aIndex > mTextureList.size() - 1) aIndex = mTextureList.size() - 1;
 		return mTextureList[aIndex]->getTexture();
 	}
+	int VDFbo::getInputTextureXLeft(unsigned int aTextureIndex) {
+		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
+		return mTextureList[aTextureIndex]->getXLeft();
+	}
+	void VDFbo::setInputTextureXLeft(unsigned int aTextureIndex, int aXLeft) {
+		mTextureList[aTextureIndex]->setXLeft(aXLeft);
+	}
+	int VDFbo::getInputTextureYTop(unsigned int aTextureIndex) {
+		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
+		return mTextureList[aTextureIndex]->getYTop();
+	}
+	void VDFbo::setInputTextureYTop(unsigned int aTextureIndex, int aYTop) {
+		mTextureList[aTextureIndex]->setYTop(aYTop);
+	}
+	int VDFbo::getInputTextureXRight(unsigned int aTextureIndex) {
+		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
+		return mTextureList[aTextureIndex]->getXRight();
+	}
+	void VDFbo::setInputTextureXRight(unsigned int aTextureIndex, int aXRight) {
+		mTextureList[aTextureIndex]->setXRight(aXRight);
+	}
+	int VDFbo::getInputTextureYBottom(unsigned int aTextureIndex) {
+		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
+		return mTextureList[aTextureIndex]->getYBottom();
+	}
+	void VDFbo::setInputTextureYBottom(unsigned int aTextureIndex, int aYBottom) {
+		mTextureList[aTextureIndex]->setYBottom(aYBottom);
+	}
+
 	string VDFbo::getInputTextureName(unsigned int aTextureIndex) {
 		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
 		return mTextureList[aTextureIndex]->getName();
