@@ -63,8 +63,12 @@ namespace VideoDromm
 		int								loadFboFragmentShader(string aFilePath, unsigned int aFboIndex = 0);
 		// fbos
 		ci::gl::Texture2dRef			getTexture();
-		ci::gl::Texture2dRef			getRightFboTexture();
 		ci::gl::Texture2dRef			getLeftFboTexture();
+		ci::gl::Texture2dRef			getRightFboTexture();
+		void							setLeftFboIndex(unsigned int aFboIndex) { if (aFboIndex < mFboList.size()- 1) mLeftFboIndex = aFboIndex; };
+		void							setRightFboIndex(unsigned int aFboIndex) { if (aFboIndex < mFboList.size()- 1) mRightFboIndex = aFboIndex; };
+		unsigned int					getLeftFboIndex() { return mLeftFboIndex; };
+		unsigned int					getRightFboIndex() { return mRightFboIndex; };
 		ci::gl::Texture2dRef			getFboTexture(unsigned int aFboIndex);
 		ci::gl::Texture2dRef			getFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex);
 		void							setFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex);
@@ -122,6 +126,8 @@ namespace VideoDromm
 		gl::FboRef						mMixFbo, mLeftFbo, mRightFbo;
 		void							renderLeftFbo();
 		void							renderRightFbo();
+		unsigned int					mRightFboIndex;
+		unsigned int					mLeftFboIndex;
 		// maintain a list of fbo for right only or left/right or more fbos specific to this mix
 		VDFboList						mFboList;
 		fs::path						mFbosFilepath;

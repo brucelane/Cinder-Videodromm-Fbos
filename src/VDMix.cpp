@@ -19,6 +19,7 @@ namespace VideoDromm {
 		mVDSettings = aVDSettings;
 		// Animation
 		mVDAnimation = aVDAnimation;
+		mLeftFboIndex = mRightFboIndex = 0;
 		// initialize the fbo list with audio texture
 		initFboList();
 		if (mName.length() == 0) {
@@ -215,6 +216,8 @@ namespace VideoDromm {
 					mFboList.push_back(t);
 				//}
 			}
+			if ( mFboList.size() > 2) mLeftFboIndex = mFboList.size() - 2;
+			if ( mFboList.size() > 1) mRightFboIndex = mFboList.size() - 1;
 		}
 	}
 	void VDMix::setPosition(int x, int y) {
@@ -285,36 +288,32 @@ namespace VideoDromm {
 	{
 		gl::ScopedFramebuffer fbScp(mLeftFbo);
 		// clear out the FBO with blue
-		gl::clear(Color(0.25, 0.5f, 1.0f));
+		gl::clear(Color::black());
 
 		// setup the viewport to match the dimensions of the FBO
-		gl::ScopedViewport scpVp(ivec2(30), mLeftFbo->getSize());
+		gl::ScopedViewport scpVp(ivec2(0), mLeftFbo->getSize());
 
 		// render the left fbo
 		gl::ScopedGlslProg shaderScp(gl::getStockShader(gl::ShaderDef().texture()));
-		gl::ScopedTextureBind tex(mFboList[0]->getTexture());
-		gl::drawSolidRect(Rectf(0, 40, mWidth, mHeight));
+		gl::ScopedTextureBind tex(mFboList[mLeftFboIndex]->getTexture());
+		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
 	}
 	// Render left FBO
 	void VDMix::renderRightFbo()
 	{
 		gl::ScopedFramebuffer fbScp(mRightFbo);
 		// clear out the FBO with red
-		gl::clear(Color(0.5, 0.0f, 0.0f));
+		gl::clear(Color::black());
 
 		// setup the viewport to match the dimensions of the FBO
-		gl::ScopedViewport scpVp(ivec2(30), mRightFbo->getSize());
+		gl::ScopedViewport scpVp(ivec2(0), mRightFbo->getSize());
 
 		// render the right fbo
 		gl::ScopedGlslProg shaderScp(gl::getStockShader(gl::ShaderDef().texture()));
-		if (mFboList.size() > 1) {
-			gl::ScopedTextureBind tex(mFboList[1]->getTexture());
-		}
-		else {
-			CI_LOG_W("renderRightFbo: only one fbo, right renders left...");
-			gl::ScopedTextureBind tex(mFboList[0]->getTexture());
-		}
-		gl::drawSolidRect(Rectf(40, 0, mWidth, mHeight));
+		
+		gl::ScopedTextureBind tex(mFboList[mRightFboIndex]->getTexture());
+		
+		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
 	}
 	ci::gl::TextureRef VDMix::getRightFboTexture() {
 		return mRightFbo->getColorTexture();
@@ -384,7 +383,7 @@ namespace VideoDromm {
 		gl::ScopedFramebuffer fbScp(mMixFbo);
 		gl::clear(Color::white());
 		// setup the viewport to match the dimensions of the FBO
-		gl::ScopedViewport scpVp(ivec2(5), mMixFbo->getSize());
+		gl::ScopedViewport scpVp(ivec2(0), mMixFbo->getSize());
 		gl::ScopedGlslProg shaderScp(mMixShader);
 		mRightFbo->bindTexture(0);
 		mLeftFbo->bindTexture(1);
@@ -436,8 +435,6 @@ namespace VideoDromm {
 		mMixShader->uniform("iSeed", mVDSettings->iSeed);
 		mMixShader->uniform("iFlipH", mFlipH);
 		mMixShader->uniform("iFlipV", mFlipV);
-
-
 		mMixShader->uniform("iTrixels", mVDAnimation->controlValues[16]);
 		mMixShader->uniform("iGridSize", mVDAnimation->controlValues[17]);
 		mMixShader->uniform("iRedMultiplier", mVDSettings->iRedMultiplier);
