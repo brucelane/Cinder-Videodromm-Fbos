@@ -288,7 +288,7 @@ namespace VideoDromm {
 		gl::ScopedFramebuffer fbScp(mFbo);
 		gl::clear(Color::black());
 		// setup the viewport to match the dimensions of the FBO
-		gl::ScopedViewport scpVp(ivec2(10), mFbo->getSize());
+		gl::ScopedViewport scpVp(ivec2(0), mFbo->getSize());
 		gl::ScopedGlslProg shaderScp(mFboTextureShader);
 		//CI_LOG_V(mFboTextureShader->getLabel());
 		//mShader->bind();
