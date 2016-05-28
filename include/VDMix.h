@@ -46,7 +46,7 @@ namespace VideoDromm
 		int								getTextureWidth();
 		int								getTextureHeight();
 		// textures
-		void							loadImageFile(string aFile, unsigned int aFboIndex, unsigned int aTextureIndex, bool right);
+		void							loadImageFile(string aFile, unsigned int aTextureIndex, bool right);
 		void							loadAudioFile(string aFile);
 		//!
 		void							fromXml(const ci::XmlTree &xml);
@@ -70,8 +70,8 @@ namespace VideoDromm
 		unsigned int					getLeftFboIndex() { return mLeftFboIndex; };
 		unsigned int					getRightFboIndex() { return mRightFboIndex; };
 		ci::gl::Texture2dRef			getFboTexture(unsigned int aFboIndex);
-		ci::gl::Texture2dRef			getFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex);
 		void							setFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex);
+		/*ci::gl::Texture2dRef			getFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex);
 		int								getFboInputTextureXLeft(unsigned int aFboIndex, unsigned int aFboInputTextureIndex);
 		void							setFboInputTextureXLeft(unsigned int aFboIndex, unsigned int aFboInputTextureIndex, int aXLeft);
 		int								getFboInputTextureYTop(unsigned int aFboIndex, unsigned int aFboInputTextureIndex);
@@ -80,15 +80,27 @@ namespace VideoDromm
 		void							setFboInputTextureXRight(unsigned int aFboIndex, unsigned int aFboInputTextureIndex, int aXRight);
 		int								getFboInputTextureYBottom(unsigned int aFboIndex, unsigned int aFboInputTextureIndex);
 		void							setFboInputTextureYBottom(unsigned int aFboIndex, unsigned int aFboInputTextureIndex, int aYBottom);
+		
+		string							getInputTextureName(unsigned int aTextureIndex);*/
+		ci::gl::Texture2dRef			getInputTexture(unsigned int aIndex);
+		int								getInputTextureXLeft(unsigned int aTextureIndex);
+		void							setInputTextureXLeft(unsigned int aTextureIndex, int aXLeft);
+		int								getInputTextureYTop(unsigned int aTextureIndex);
+		void							setInputTextureYTop(unsigned int aTextureIndex, int aYTop);
+		int								getInputTextureXRight(unsigned int aTextureIndex);
+		void							setInputTextureXRight(unsigned int aTextureIndex, int aXRight);
+		int								getInputTextureYBottom(unsigned int aTextureIndex);
+		void							setInputTextureYBottom(unsigned int aTextureIndex, int aYBottom);
+
 
 		int								getFboTextureWidth(unsigned int aFboIndex);
 		int								getFboTextureHeight(unsigned int aFboIndex);
-		unsigned int					getInputTexturesCount(unsigned int aFboIndex);
+		unsigned int					getInputTexturesCount();
 		unsigned int					getFboCount() { return mFboList.size(); };
 		string							getFboName(unsigned int aFboIndex);
 		string							getFboLabel(unsigned int aFboIndex);
 		string							getFboFragmentShaderText(unsigned int aFboIndex);
-		string							getInputTextureName(unsigned int aFboIndex, unsigned int aTextureIndex);
+		string							getInputTextureName(unsigned int aTextureIndex);
 		// uniforms
 		void							setCrossfade(float aCrossfade);
 		// audio spectrum
@@ -133,6 +145,9 @@ namespace VideoDromm
 		fs::path						mFbosFilepath;
 		//! Shaders
 		string							mMixShaderName;
-
+		// Textures
+		VDTextureList					mTextureList;
+		fs::path						mTexturesFilepath;
+		bool							initTextureList();
 	};
 }

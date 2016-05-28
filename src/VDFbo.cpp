@@ -109,7 +109,7 @@ namespace VideoDromm {
 		return xml;
 	}
 	std::string VDFbo::getLabel() {
-		mFbo->setLabel(mId + " " + mTextureList[inputTextureIndex]->getName() + " " + mFboTextureShader->getLabel());
+		mFbo->setLabel(mId + " " + mFboTextureShader->getLabel());
 		return mFbo->getLabel();
 	}
 
@@ -140,7 +140,7 @@ namespace VideoDromm {
 					}
 				}
 			}
-			string texturetype = textureChild->getAttributeValue<string>("texturetype", "unknown");
+			/*string texturetype = textureChild->getAttributeValue<string>("texturetype", "unknown");
 			CI_LOG_V("fbo texturetype " + texturetype);
 			XmlTree detailsXml = textureChild->getChild("details");
 			if (texturetype == "image") {
@@ -197,7 +197,7 @@ namespace VideoDromm {
 				xml.setAttribute("height", 480);
 				t->fromXml(xml);
 				mTextureList.push_back(t);
-			}
+			}*/
 		}
 	}
 
@@ -232,42 +232,15 @@ namespace VideoDromm {
 		return mFboName;
 	}
 	void VDFbo::setInputTexture(unsigned int aTextureIndex) {
-		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
+		//if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
 		inputTextureIndex = aTextureIndex;
 	}
 
-	ci::gl::Texture2dRef VDFbo::getInputTexture(unsigned int aIndex) {
+	/*ci::gl::Texture2dRef VDFbo::getInputTexture(unsigned int aIndex) {
 		if (aIndex > mTextureList.size() - 1) aIndex = mTextureList.size() - 1;
 		return mTextureList[aIndex]->getTexture();
 	}
-	int VDFbo::getInputTextureXLeft(unsigned int aTextureIndex) {
-		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
-		return mTextureList[aTextureIndex]->getXLeft();
-	}
-	void VDFbo::setInputTextureXLeft(unsigned int aTextureIndex, int aXLeft) {
-		mTextureList[aTextureIndex]->setXLeft(aXLeft);
-	}
-	int VDFbo::getInputTextureYTop(unsigned int aTextureIndex) {
-		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
-		return mTextureList[aTextureIndex]->getYTop();
-	}
-	void VDFbo::setInputTextureYTop(unsigned int aTextureIndex, int aYTop) {
-		mTextureList[aTextureIndex]->setYTop(aYTop);
-	}
-	int VDFbo::getInputTextureXRight(unsigned int aTextureIndex) {
-		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
-		return mTextureList[aTextureIndex]->getXRight();
-	}
-	void VDFbo::setInputTextureXRight(unsigned int aTextureIndex, int aXRight) {
-		mTextureList[aTextureIndex]->setXRight(aXRight);
-	}
-	int VDFbo::getInputTextureYBottom(unsigned int aTextureIndex) {
-		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
-		return mTextureList[aTextureIndex]->getYBottom();
-	}
-	void VDFbo::setInputTextureYBottom(unsigned int aTextureIndex, int aYBottom) {
-		mTextureList[aTextureIndex]->setYBottom(aYBottom);
-	}
+
 
 	string VDFbo::getInputTextureName(unsigned int aTextureIndex) {
 		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
@@ -282,7 +255,7 @@ namespace VideoDromm {
 	void VDFbo::loadAudioFile(string aFile) {
 		CI_LOG_V("fbo" + mId + ": loadAudioFile " + aFile + " at textureIndex 0");
 		mTextureList[0]->loadFromFullPath(aFile);
-	}
+	}*/
 	ci::gl::Texture2dRef VDFbo::getTexture() {
 		iChannelResolution0 = vec3(mPosX, mPosY, 0.5);
 		gl::ScopedFramebuffer fbScp(mFbo);
@@ -297,7 +270,7 @@ namespace VideoDromm {
 		mFboTextureShader->uniform("iChannelResolution[0]", iChannelResolution0);
 		mFboTextureShader->uniform("iChannel0", 0);
 		mFboTextureShader->uniform("iZoom", mZoom);
-		gl::ScopedTextureBind tex(mTextureList[inputTextureIndex]->getTexture());
+		// TODO gl::ScopedTextureBind tex(mTextureList[inputTextureIndex]->getTexture());
 		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
 		return mFbo->getColorTexture();
 	}

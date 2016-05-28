@@ -62,21 +62,9 @@ namespace VideoDromm
 		string							getFragmentShaderText(unsigned int aFboIndex);
 		// textures
 		void							setInputTexture(unsigned int aTextureIndex);
-		ci::gl::Texture2dRef			getInputTexture(unsigned int aIndex);
-		unsigned int					getInputTexturesCount() { return mTextureList.size(); };
-		string							getInputTextureName(unsigned int aTextureIndex);
-		int								getInputTextureXLeft(unsigned int aTextureIndex);
-		void							setInputTextureXLeft(unsigned int aTextureIndex, int aXLeft);
-		int								getInputTextureYTop(unsigned int aTextureIndex);
-		void							setInputTextureYTop(unsigned int aTextureIndex, int aYTop);
-		int								getInputTextureXRight(unsigned int aTextureIndex);
-		void							setInputTextureXRight(unsigned int aTextureIndex, int aXRight);
-		int								getInputTextureYBottom(unsigned int aTextureIndex);
-		void							setInputTextureYBottom(unsigned int aTextureIndex, int aYBottom);
-
 		ci::gl::Texture2dRef			getTexture();
-		void							loadImageFile(string aFile, unsigned int aTextureIndex);
-		void							loadAudioFile(string aFile);
+		//void							loadImageFile(string aFile, unsigned int aTextureIndex);
+		//void							loadAudioFile(string aFile);
 
 	protected:
 		std::string						mFboName;
@@ -110,7 +98,6 @@ namespace VideoDromm
 		VDShadersRef					mVDShaders;
 		//! Fbo
 		gl::FboRef						mFbo;
-		VDTextureList					mTextureList;
 		unsigned int					inputTextureIndex;
 		//! Shaders
 		string							mShaderName;
