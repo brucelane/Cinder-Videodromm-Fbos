@@ -208,7 +208,8 @@ namespace VideoDromm {
 		return mFboList[aFboIndex]->loadFragmentShader(aFilePath);
 	}
 	string VDMix::getFboFragmentShaderText(unsigned int aFboIndex) {
-		return mFboList[0]->getFragmentShaderText(aFboIndex);
+		if (aFboIndex > mFboList.size() - 1) aFboIndex = 0;
+		return mFboList[aFboIndex]->getFragmentShaderText(aFboIndex);
 	}
 	VDMixList VDMix::readSettings(VDSettingsRef aVDSettings, VDAnimationRef aVDAnimation, const DataSourceRef &source) {
 		XmlTree			doc;
