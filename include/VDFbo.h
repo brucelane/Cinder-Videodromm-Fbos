@@ -34,9 +34,9 @@ namespace VideoDromm
 
 	class VDFbo : public VDTexture{
 	public:
-		VDFbo(VDSettingsRef aVDSettings, VDAnimationRef aVDAnimation);
+		VDFbo(VDSettingsRef aVDSettings, VDAnimationRef aVDAnimation, VDTextureList aTextureList);
 		~VDFbo(void);
-		static VDFboRef create(VDSettingsRef aVDSettings, VDAnimationRef aVDAnimation) { return std::make_shared<VDFbo>(aVDSettings, aVDAnimation); }
+		static VDFboRef create(VDSettingsRef aVDSettings, VDAnimationRef aVDAnimation, VDTextureList aTextureList) { return std::make_shared<VDFbo>(aVDSettings, aVDAnimation, aTextureList); }
 		//! returns a shared pointer to this fbo
 		VDFboRef						getPtr() { return std::static_pointer_cast<VDFbo>(shared_from_this()); }
 		ci::ivec2						getSize();
@@ -98,6 +98,8 @@ namespace VideoDromm
 		VDShadersRef					mVDShaders;
 		//! Fbo
 		gl::FboRef						mFbo;
+		// Textures
+		VDTextureList					mTextureList;
 		unsigned int					inputTextureIndex;
 		//! Shaders
 		string							mShaderName;

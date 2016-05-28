@@ -95,29 +95,13 @@ namespace VideoDromm {
 		if (mFboList.size() == 0) {
 			CI_LOG_V("VDMix::init mFboList");
 			isFirstLaunch = true;
-			VDFboRef t(new VDFbo(mVDSettings, mVDAnimation));
-			// add details child
-			/*XmlTree			detailsXml;
-			detailsXml.setTag("details");
-			detailsXml.setAttribute("path", "");
-			detailsXml.setAttribute("width", "512");
-			detailsXml.setAttribute("height", "2");
-			detailsXml.setAttribute("topdown", "0");
-			detailsXml.setAttribute("uselinein", "1");
-			detailsXml.setAttribute("shadername", "0.glsl");
-			// add texture child
-			XmlTree			textureXml;
-			textureXml.setTag("texture");
-			textureXml.setAttribute("id", "0");
-			textureXml.setAttribute("texturetype", "audio");
-			textureXml.push_back(detailsXml);*/
+			VDFboRef t(new VDFbo(mVDSettings, mVDAnimation, mTextureList));
 			// create fbo xml
 			XmlTree			fboXml;
 			fboXml.setTag("audio fbo 0");
 			fboXml.setAttribute("id", "0");
 			fboXml.setAttribute("width", "640");
-			fboXml.setAttribute("height", "480");
-			//fboXml.push_back(textureXml);
+			fboXml.setAttribute("height", "480");;
 			t->fromXml(fboXml);
 			mFboList.push_back(t);
 		}
@@ -304,7 +288,7 @@ namespace VideoDromm {
 			CI_LOG_V("VDMix got fbo child ");
 			for (XmlTree::ConstIter fboChild = xml.begin("fbo"); fboChild != xml.end(); ++fboChild) {
 				CI_LOG_V("VDMix create fbo ");
-				VDFboRef t(new VDFbo(mVDSettings, mVDAnimation));
+				VDFboRef t(new VDFbo(mVDSettings, mVDAnimation, mTextureList));
 				t->fromXml(*fboChild);
 				mFboList.push_back(t);
 			}
