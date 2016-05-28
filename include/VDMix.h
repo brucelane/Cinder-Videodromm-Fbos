@@ -65,8 +65,8 @@ namespace VideoDromm
 		ci::gl::Texture2dRef			getTexture();
 		ci::gl::Texture2dRef			getLeftFboTexture();
 		ci::gl::Texture2dRef			getRightFboTexture();
-		void							setLeftFboIndex(unsigned int aFboIndex) { if (aFboIndex < mFboList.size()- 1) mLeftFboIndex = aFboIndex; };
-		void							setRightFboIndex(unsigned int aFboIndex) { if (aFboIndex < mFboList.size()- 1) mRightFboIndex = aFboIndex; };
+		void							setLeftFboIndex(unsigned int aFboIndex);
+		void							setRightFboIndex(unsigned int aFboIndex);
 		unsigned int					getLeftFboIndex() { return mLeftFboIndex; };
 		unsigned int					getRightFboIndex() { return mRightFboIndex; };
 		ci::gl::Texture2dRef			getFboTexture(unsigned int aFboIndex);

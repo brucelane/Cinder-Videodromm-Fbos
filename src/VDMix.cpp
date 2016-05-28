@@ -341,25 +341,20 @@ namespace VideoDromm {
 	int VDMix::getFboTextureWidth(unsigned int aFboIndex) {
 		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
 		return mFboList[aFboIndex]->getTextureWidth();
-	};
-
+	}
 	int VDMix::getFboTextureHeight(unsigned int aFboIndex) {
 		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
 		return mFboList[aFboIndex]->getTextureHeight();
-	};
-
+	}
 	ci::ivec2 VDMix::getSize() {
 		return mMixFbo->getSize();
 	}
-
 	ci::Area VDMix::getBounds() {
 		return mMixFbo->getBounds();
 	}
-
 	GLuint VDMix::getId() {
 		return mMixFbo->getId();
 	}
-
 	std::string VDMix::getName(){
 		return mName;
 	}
@@ -401,6 +396,16 @@ namespace VideoDromm {
 	ci::gl::TextureRef VDMix::getLeftFboTexture() {
 		return mLeftFbo->getColorTexture();
 	}
+	void VDMix::setLeftFboIndex(unsigned int aFboIndex) {
+		CI_LOG_V("setLeftFboIndex before " + toString(mLeftFboIndex) + " at aFboIndex " + toString(aFboIndex));
+		if (aFboIndex < mFboList.size()) mLeftFboIndex = aFboIndex; 
+		CI_LOG_V("setLeftFboIndex after  " + toString(mLeftFboIndex) + " at aFboIndex " + toString(aFboIndex));
+		CI_LOG_V("end");
+	}
+	void VDMix::setRightFboIndex(unsigned int aFboIndex) { 
+		if (aFboIndex < mFboList.size()) mRightFboIndex = aFboIndex; 
+	}
+
 	void VDMix::loadImageFile(string aFile, unsigned int aTextureIndex, bool right) {
 		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
 		CI_LOG_V("loadImageFile " + aFile + " at textureIndex " + toString(aTextureIndex));
