@@ -397,10 +397,7 @@ namespace VideoDromm {
 		return mLeftFbo->getColorTexture();
 	}
 	void VDMix::setLeftFboIndex(unsigned int aFboIndex) {
-		CI_LOG_V("setLeftFboIndex before " + toString(mLeftFboIndex) + " at aFboIndex " + toString(aFboIndex));
 		if (aFboIndex < mFboList.size()) mLeftFboIndex = aFboIndex; 
-		CI_LOG_V("setLeftFboIndex after  " + toString(mLeftFboIndex) + " at aFboIndex " + toString(aFboIndex));
-		CI_LOG_V("end");
 	}
 	void VDMix::setRightFboIndex(unsigned int aFboIndex) { 
 		if (aFboIndex < mFboList.size()) mRightFboIndex = aFboIndex; 
