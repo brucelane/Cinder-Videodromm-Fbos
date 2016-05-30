@@ -21,7 +21,7 @@ namespace VideoDromm {
 		mVDAnimation = aVDAnimation;
 		mLeftFboIndex = mRightFboIndex = 0;
 		// initialize the textures list with audio texture
-		mTexturesFilepath = getAssetPath("") / "textures.xml";
+		mTexturesFilepath = getAssetPath("") / mVDSettings->mAssetsPath / "textures.xml";
 		initTextureList();
 
 		// initialize the fbo list
@@ -142,6 +142,10 @@ namespace VideoDromm {
 						string texturetype = textureChild->getAttributeValue<string>("texturetype", "unknown");
 						CI_LOG_V("texturetype " + texturetype);
 						XmlTree detailsXml = textureChild->getChild("details");
+						// read or add the assets path
+						string mFolder = detailsXml.getAttributeValue<string>("folder", "");
+						if (mFolder.length() == 0) detailsXml.setAttribute("folder", mVDSettings->mAssetsPath);
+						// create the texture
 						if (texturetype == "image") {
 							TextureImageRef t(TextureImage::create());
 							t->fromXml(detailsXml);
