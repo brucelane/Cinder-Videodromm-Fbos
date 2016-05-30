@@ -37,7 +37,10 @@ namespace VideoDromm {
 		mMixFbo = gl::Fbo::create(mWidth, mHeight, format.depthTexture());
 		mLeftFbo = gl::Fbo::create(mWidth, mHeight, format.depthTexture());
 		mRightFbo = gl::Fbo::create(mWidth, mHeight, format.depthTexture());
-		mUseLeftFbo = mUseRightFbo = false;
+		// useless for now:
+		mUseLeftFbo = mUseRightFbo = true;
+		// use fbo texture for live coding
+		mUseFbo = false;
 		// init with passthru shader
 		mMixShaderName = "mixshader";
 		// load shadertoy uniform variables declarations
@@ -465,20 +468,22 @@ namespace VideoDromm {
 		// setup the viewport to match the dimensions of the FBO
 		gl::ScopedViewport scpVp(ivec2(0), mMixFbo->getSize());
 		gl::ScopedGlslProg shaderScp(mMixShader);
-		if (mUseLeftFbo) {
+		//if (mUseLeftFbo) {
 			renderLeftFbo();
 			mLeftFbo->bindTexture(0);
-		}
+		/*}
 		else {
-			mTextureList[mFboList[mLeftFboIndex]->getInputTextureIndex()]->getTexture()->bind(0);
+			//mTextureList[mFboList[mLeftFboIndex]->getInputTextureIndex()]->getTexture()->bind(0);
+			getInputTexture(mFboList[mLeftFboIndex]->getInputTextureIndex())->bind(0);
 		}
-		if (mUseRightFbo) {
+		if (mUseRightFbo) {*/
 			renderRightFbo();
 			mRightFbo->bindTexture(1);
-		}
+		/*}
 		else {
-			mTextureList[mFboList[mRightFboIndex]->getInputTextureIndex()]->getTexture()->bind(1);
-		}
+			//mTextureList[mFboList[mRightFboIndex]->getInputTextureIndex()]->getTexture()->bind(1);
+			getInputTexture(mFboList[mRightFboIndex]->getInputTextureIndex())->bind(1);
+		}*/
 		mMixShader->uniform("iGlobalTime", mVDSettings->iGlobalTime);
 		mMixShader->uniform("iResolution", vec3(mWidth, mHeight, 1.0));
 		mMixShader->uniform("iChannelResolution[0]", iChannelResolution0);

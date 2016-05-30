@@ -69,6 +69,9 @@ namespace VideoDromm
 		void							setRightFboIndex(unsigned int aFboIndex);
 		unsigned int					getLeftFboIndex() { return mLeftFboIndex; };
 		unsigned int					getRightFboIndex() { return mRightFboIndex; };
+		bool							isLeftFboUsed() { return mUseLeftFbo; };
+		bool							isRightFboUsed() { return mUseRightFbo; };
+		bool							isFboUsed() { return mUseFbo; };
 		ci::gl::Texture2dRef			getFboTexture(unsigned int aFboIndex);
 		void							setFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex);
 		/*string							getInputTextureName(unsigned int aTextureIndex);*/
@@ -130,6 +133,7 @@ namespace VideoDromm
 		unsigned int					mLeftFboIndex;
 		bool							mUseLeftFbo;
 		bool							mUseRightFbo;
+		bool							mUseFbo;
 		// maintain a list of fbo for right only or left/right or more fbos specific to this mix
 		VDFboList						mFboList;
 		fs::path						mFbosFilepath;
