@@ -90,6 +90,7 @@ namespace VideoDromm {
 		if (mFragmentShaderText.length() > 0) {
 			mFboTextureShader = gl::GlslProg::create(mPassthruVextexShaderString, mFragmentShaderText);
 			mFboTextureShader->setLabel(mShaderName);
+			mVDSettings->mShaderToLoad =  "";
 			rtn = 0;
 		}
 		return rtn;

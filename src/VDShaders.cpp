@@ -148,7 +148,16 @@ string VDShaders::loadFboPixelFragmentShader(string aFilePath) {
 		mFragFileName = name;
 		if (fs::exists(fr)) {
 			validFrag = false;
-			std::string fs = shaderInclude + loadString(loadFile(aFilePath));
+			string loadedText = loadString(loadFile(aFilePath));
+			std::size_t foundUniform = loadedText.find("uniform");
+			std::string fs;
+			if (foundUniform != std::string::npos) {
+				// found uniforms
+				fs = loadedText;
+			}
+			else {
+				fs = shaderInclude + loadedText;
+			}
 			VDShader newShader;
 			newShader.shader = gl::GlslProg::create(mPassthruVextexShaderString, fs);
 			newShader.name = name;
@@ -156,7 +165,8 @@ string VDShaders::loadFboPixelFragmentShader(string aFilePath) {
 			newShader.active = true;
 			mFragmentShaders.push_back(newShader);
 			rtn = fs;
-		} else {
+		}
+		else {
 			CI_LOG_V(mFragFile + " does not exist");
 		}
 	}
