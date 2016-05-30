@@ -37,6 +37,7 @@ namespace VideoDromm {
 		mMixFbo = gl::Fbo::create(mWidth, mHeight, format.depthTexture());
 		mLeftFbo = gl::Fbo::create(mWidth, mHeight, format.depthTexture());
 		mRightFbo = gl::Fbo::create(mWidth, mHeight, format.depthTexture());
+		mUseLeftFbo = mUseRightFbo = false;
 		// init with passthru shader
 		mMixShaderName = "mixshader";
 		// load shadertoy uniform variables declarations
@@ -176,7 +177,7 @@ namespace VideoDromm {
 							mTextureList.push_back(t);
 						}
 						else if (texturetype == "audio") {
-							/* audio texture done in initTextures 
+							/* audio texture done in initTextures
 							TextureAudioRef t(new TextureAudio(mVDAnimation));
 							t->fromXml(detailsXml);
 							mTextureList.push_back(t);
@@ -319,9 +320,9 @@ namespace VideoDromm {
 	int VDMix::getTextureHeight() {
 		return mHeight;
 	};
-	ci::gl::Texture2dRef VDMix::getInputTexture(unsigned int aIndex) {
-		if (aIndex > mTextureList.size() - 1) aIndex = mTextureList.size() - 1;
-		return mTextureList[aIndex]->getTexture();
+	ci::gl::Texture2dRef VDMix::getInputTexture(unsigned int aTextureIndex) {
+		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
+		return mTextureList[aTextureIndex]->getTexture();
 	}
 	string VDMix::getInputTextureName(unsigned int aTextureIndex) {
 		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
@@ -358,6 +359,73 @@ namespace VideoDromm {
 	std::string VDMix::getName(){
 		return mName;
 	}
+
+	ci::gl::TextureRef VDMix::getRightFboTexture() {
+		return mRightFbo->getColorTexture();
+	}
+	ci::gl::TextureRef VDMix::getLeftFboTexture() {
+		return mLeftFbo->getColorTexture();
+	}
+	void VDMix::setLeftFboIndex(unsigned int aFboIndex) {
+		if (aFboIndex < mFboList.size()) mLeftFboIndex = aFboIndex;
+	}
+	void VDMix::setRightFboIndex(unsigned int aFboIndex) {
+		if (aFboIndex < mFboList.size()) mRightFboIndex = aFboIndex;
+	}
+	void VDMix::loadImageFile(string aFile, unsigned int aTextureIndex, bool right) {
+		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
+		CI_LOG_V("loadImageFile " + aFile + " at textureIndex " + toString(aTextureIndex));
+		mTextureList[aTextureIndex]->loadFromFullPath(aFile);
+	}
+	void VDMix::loadAudioFile(string aFile) {
+		mTextureList[0]->loadFromFullPath(aFile);
+	}
+	ci::gl::Texture2dRef VDMix::getFboTexture(unsigned int aFboIndex) {
+		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+		return mFboList[aFboIndex]->getTexture();
+	}
+	void VDMix::setFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex) {
+		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
+		if (aFboInputTextureIndex > mTextureList.size() - 1) aFboInputTextureIndex = mTextureList.size() - 1;
+		mFboList[aFboIndex]->setInputTexture(aFboInputTextureIndex);
+	}
+	int VDMix::getInputTextureXLeft(unsigned int aTextureIndex) {
+		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
+		return mTextureList[aTextureIndex]->getXLeft();
+	}
+	void VDMix::setInputTextureXLeft(unsigned int aTextureIndex, int aXLeft) {
+		mTextureList[aTextureIndex]->setXLeft(aXLeft);
+	}
+	int VDMix::getInputTextureYTop(unsigned int aTextureIndex) {
+		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
+		return mTextureList[aTextureIndex]->getYTop();
+	}
+	void VDMix::setInputTextureYTop(unsigned int aTextureIndex, int aYTop) {
+		mTextureList[aTextureIndex]->setYTop(aYTop);
+	}
+	int VDMix::getInputTextureXRight(unsigned int aTextureIndex) {
+		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
+		return mTextureList[aTextureIndex]->getXRight();
+	}
+	void VDMix::setInputTextureXRight(unsigned int aTextureIndex, int aXRight) {
+		mTextureList[aTextureIndex]->setXRight(aXRight);
+	}
+	int VDMix::getInputTextureYBottom(unsigned int aTextureIndex) {
+		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
+		return mTextureList[aTextureIndex]->getYBottom();
+	}
+	void VDMix::setInputTextureYBottom(unsigned int aTextureIndex, int aYBottom) {
+		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
+		mTextureList[aTextureIndex]->setYBottom(aYBottom);
+	}
+	void VDMix::setInputTextureToggleTopDown(unsigned int aTextureIndex) {
+		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
+		mTextureList[aTextureIndex]->toggleTopDown();
+	}
+
+	void VDMix::setCrossfade(float aCrossfade) {
+		mVDAnimation->controlValues[21] = aCrossfade;
+	}
 	// Render left FBO
 	void VDMix::renderLeftFbo()
 	{
@@ -390,86 +458,27 @@ namespace VideoDromm {
 
 		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
 	}
-	ci::gl::TextureRef VDMix::getRightFboTexture() {
-		return mRightFbo->getColorTexture();
-	}
-	ci::gl::TextureRef VDMix::getLeftFboTexture() {
-		return mLeftFbo->getColorTexture();
-	}
-	void VDMix::setLeftFboIndex(unsigned int aFboIndex) {
-		if (aFboIndex < mFboList.size()) mLeftFboIndex = aFboIndex; 
-	}
-	void VDMix::setRightFboIndex(unsigned int aFboIndex) { 
-		if (aFboIndex < mFboList.size()) mRightFboIndex = aFboIndex; 
-	}
-
-	void VDMix::loadImageFile(string aFile, unsigned int aTextureIndex, bool right) {
-		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
-		CI_LOG_V("loadImageFile " + aFile + " at textureIndex " + toString(aTextureIndex));
-		mTextureList[aTextureIndex]->loadFromFullPath(aFile);
-	}
-	void VDMix::loadAudioFile(string aFile) {
-		mTextureList[0]->loadFromFullPath(aFile);
-
-	}
-
-	ci::gl::Texture2dRef VDMix::getFboTexture(unsigned int aFboIndex) {
-		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
-		return mFboList[aFboIndex]->getTexture();
-	}
-	/*ci::gl::Texture2dRef VDMix::getFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex) {
-		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
-		return mFboList[aFboIndex]->getInputTexture(aFboInputTextureIndex);
-		}*/
-	void VDMix::setFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex) {
-		if (aFboIndex > mFboList.size() - 1) aFboIndex = mFboList.size() - 1;
-		if (aFboInputTextureIndex > mTextureList.size() - 1) aFboInputTextureIndex = mTextureList.size() - 1;
-		mFboList[aFboIndex]->setInputTexture(aFboInputTextureIndex);
-	}
-	int VDMix::getInputTextureXLeft(unsigned int aTextureIndex) {
-		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
-		return mTextureList[aTextureIndex]->getXLeft();
-	}
-	void VDMix::setInputTextureXLeft(unsigned int aTextureIndex, int aXLeft) {
-		mTextureList[aTextureIndex]->setXLeft(aXLeft);
-	}
-	int VDMix::getInputTextureYTop(unsigned int aTextureIndex) {
-		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
-		return mTextureList[aTextureIndex]->getYTop();
-	}
-	void VDMix::setInputTextureYTop(unsigned int aTextureIndex, int aYTop) {
-		mTextureList[aTextureIndex]->setYTop(aYTop);
-	}
-	int VDMix::getInputTextureXRight(unsigned int aTextureIndex) {
-		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
-		return mTextureList[aTextureIndex]->getXRight();
-	}
-	void VDMix::setInputTextureXRight(unsigned int aTextureIndex, int aXRight) {
-		mTextureList[aTextureIndex]->setXRight(aXRight);
-	}
-	int VDMix::getInputTextureYBottom(unsigned int aTextureIndex) {
-		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
-		return mTextureList[aTextureIndex]->getYBottom();
-	}
-	void VDMix::setInputTextureYBottom(unsigned int aTextureIndex, int aYBottom) {
-		mTextureList[aTextureIndex]->setYBottom(aYBottom);
-	}
-
-	void VDMix::setCrossfade(float aCrossfade) {
-		mVDAnimation->controlValues[21] = aCrossfade;
-	}
 	ci::gl::TextureRef VDMix::getTexture() {
-		renderLeftFbo();
-		renderRightFbo();
 		iChannelResolution0 = vec3(mPosX, mPosY, 0.5);
 		gl::ScopedFramebuffer fbScp(mMixFbo);
 		gl::clear(Color::white());
 		// setup the viewport to match the dimensions of the FBO
 		gl::ScopedViewport scpVp(ivec2(0), mMixFbo->getSize());
 		gl::ScopedGlslProg shaderScp(mMixShader);
-		mRightFbo->bindTexture(0);
-		mLeftFbo->bindTexture(1);
-
+		if (mUseLeftFbo) {
+			renderLeftFbo();
+			mLeftFbo->bindTexture(0);
+		}
+		else {
+			mTextureList[mFboList[mLeftFboIndex]->getInputTextureIndex()]->getTexture()->bind(0);
+		}
+		if (mUseRightFbo) {
+			renderRightFbo();
+			mRightFbo->bindTexture(1);
+		}
+		else {
+			mTextureList[mFboList[mRightFboIndex]->getInputTextureIndex()]->getTexture()->bind(1);
+		}
 		mMixShader->uniform("iGlobalTime", mVDSettings->iGlobalTime);
 		mMixShader->uniform("iResolution", vec3(mWidth, mHeight, 1.0));
 		mMixShader->uniform("iChannelResolution[0]", iChannelResolution0);

@@ -71,9 +71,8 @@ namespace VideoDromm
 		unsigned int					getRightFboIndex() { return mRightFboIndex; };
 		ci::gl::Texture2dRef			getFboTexture(unsigned int aFboIndex);
 		void							setFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex);
-		/*ci::gl::Texture2dRef			getFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex);		
-		string							getInputTextureName(unsigned int aTextureIndex);*/
-		ci::gl::Texture2dRef			getInputTexture(unsigned int aIndex);
+		/*string							getInputTextureName(unsigned int aTextureIndex);*/
+		ci::gl::Texture2dRef			getInputTexture(unsigned int aTextureIndex);
 		int								getInputTextureXLeft(unsigned int aTextureIndex);
 		void							setInputTextureXLeft(unsigned int aTextureIndex, int aXLeft);
 		int								getInputTextureYTop(unsigned int aTextureIndex);
@@ -82,6 +81,7 @@ namespace VideoDromm
 		void							setInputTextureXRight(unsigned int aTextureIndex, int aXRight);
 		int								getInputTextureYBottom(unsigned int aTextureIndex);
 		void							setInputTextureYBottom(unsigned int aTextureIndex, int aYBottom);
+		void							setInputTextureToggleTopDown(unsigned int aTextureIndex);
 
 		int								getFboTextureWidth(unsigned int aFboIndex);
 		int								getFboTextureHeight(unsigned int aFboIndex);
@@ -128,6 +128,8 @@ namespace VideoDromm
 		void							renderRightFbo();
 		unsigned int					mRightFboIndex;
 		unsigned int					mLeftFboIndex;
+		bool							mUseLeftFbo;
+		bool							mUseRightFbo;
 		// maintain a list of fbo for right only or left/right or more fbos specific to this mix
 		VDFboList						mFboList;
 		fs::path						mFbosFilepath;

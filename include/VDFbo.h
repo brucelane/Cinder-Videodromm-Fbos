@@ -62,6 +62,7 @@ namespace VideoDromm
 		string							getFragmentShaderText(unsigned int aFboIndex);
 		// textures
 		void							setInputTexture(unsigned int aTextureIndex);
+		unsigned int					getInputTextureIndex() { return inputTextureIndex; };
 		ci::gl::Texture2dRef			getTexture();
 		//void							loadImageFile(string aFile, unsigned int aTextureIndex);
 		//void							loadAudioFile(string aFile);

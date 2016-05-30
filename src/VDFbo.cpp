@@ -10,7 +10,7 @@ namespace VideoDromm {
 	VDFbo::VDFbo(VDSettingsRef aVDSettings, VDAnimationRef aVDAnimation, VDTextureList aTextureList)
 		: mFilePathOrText("")
 		, mFboName("fbo")
-		, mWidth(640)
+		, mWidth(1024)
 		, mHeight(480)
 	{
 		CI_LOG_V("VDFbo constructor");
@@ -109,16 +109,13 @@ namespace VideoDromm {
 
 		return xml;
 	}
-	std::string VDFbo::getLabel() {
-		mFbo->setLabel(mId + " " + mFboTextureShader->getLabel());
-		return mFbo->getLabel();
-	}
 
 	void VDFbo::fromXml(const XmlTree &xml)
 	{
 		mId = xml.getAttributeValue<string>("id", "");
 		string mGlslPath = xml.getAttributeValue<string>("shadername", "0.glsl");
-
+		mWidth = xml.getAttributeValue<int>("width", 1024);
+		mHeight = xml.getAttributeValue<int>("height", 768);
 		CI_LOG_V("fbo id " + mId + "fbo shadername " + mGlslPath);
 		if (mGlslPath.length() > 0) {
 			fs::path fr = getAssetPath("") / mGlslPath;// TODO / mVDSettings->mAssetsPath
@@ -133,6 +130,10 @@ namespace VideoDromm {
 				}
 			}
 		}
+	}
+	std::string VDFbo::getLabel() {
+		mFbo->setLabel(mId + " " + mFboTextureShader->getLabel());
+		return mFbo->getLabel();
 	}
 
 	void VDFbo::setPosition(int x, int y) {
@@ -190,7 +191,7 @@ namespace VideoDromm {
 		mFboTextureShader->uniform("iChannel0", 0);
 		mFboTextureShader->uniform("iZoom", mZoom);
 		gl::ScopedTextureBind tex(mTextureList[inputTextureIndex]->getTexture());
-		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
+		gl::drawSolidRect(Rectf(0, 0, mVDSettings->mRenderWidth, mVDSettings->mRenderHeight));
 		return mFbo->getColorTexture();
 	}
 } // namespace VideoDromm
