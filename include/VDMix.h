@@ -69,9 +69,10 @@ namespace VideoDromm
 		void							setRightFboIndex(unsigned int aFboIndex);
 		unsigned int					getLeftFboIndex() { return mLeftFboIndex; };
 		unsigned int					getRightFboIndex() { return mRightFboIndex; };
-		bool							isLeftFboUsed() { return mUseLeftFbo; };
-		bool							isRightFboUsed() { return mUseRightFbo; };
+		/*bool							isLeftFboUsed() { return mUseLeftFbo; };
+		bool							isRightFboUsed() { return mUseRightFbo; };*/
 		bool							isFboUsed() { return mUseFbo; };
+		void							toggleFboUsed() { mUseFbo = !mUseFbo; };
 		ci::gl::Texture2dRef			getFboTexture(unsigned int aFboIndex);
 		void							setFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex);
 		/*string							getInputTextureName(unsigned int aTextureIndex);*/
@@ -84,7 +85,11 @@ namespace VideoDromm
 		void							setInputTextureXRight(unsigned int aTextureIndex, int aXRight);
 		int								getInputTextureYBottom(unsigned int aTextureIndex);
 		void							setInputTextureYBottom(unsigned int aTextureIndex, int aYBottom);
-		void							setInputTextureToggleTopDown(unsigned int aTextureIndex);
+		bool							getInputTextureTopDown(unsigned int aTextureIndex);
+		void							toggleInputTextureTopDown(unsigned int aTextureIndex);
+
+		bool							getInputTextureLockBounds(unsigned int aTextureIndex);
+		void							toggleInputTextureLockBounds(unsigned int aTextureIndex);
 
 		int								getFboTextureWidth(unsigned int aFboIndex);
 		int								getFboTextureHeight(unsigned int aFboIndex);

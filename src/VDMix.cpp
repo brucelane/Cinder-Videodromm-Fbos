@@ -38,7 +38,7 @@ namespace VideoDromm {
 		mLeftFbo = gl::Fbo::create(mWidth, mHeight, format.depthTexture());
 		mRightFbo = gl::Fbo::create(mWidth, mHeight, format.depthTexture());
 		// useless for now:
-		mUseLeftFbo = mUseRightFbo = true;
+		//mUseLeftFbo = mUseRightFbo = true;
 		// use fbo texture for live coding
 		mUseFbo = false;
 		// init with passthru shader
@@ -425,9 +425,21 @@ namespace VideoDromm {
 		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
 		mTextureList[aTextureIndex]->setYBottom(aYBottom);
 	}
-	void VDMix::setInputTextureToggleTopDown(unsigned int aTextureIndex) {
+	bool VDMix::getInputTextureTopDown(unsigned int aTextureIndex) {
+		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
+		return mTextureList[aTextureIndex]->isTopDown();
+	}
+	void VDMix::toggleInputTextureTopDown(unsigned int aTextureIndex) {
 		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
 		mTextureList[aTextureIndex]->toggleTopDown();
+	}
+	bool VDMix::getInputTextureLockBounds(unsigned int aTextureIndex) {
+		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
+		return mTextureList[aTextureIndex]->getLockBounds();
+	}
+	void VDMix::toggleInputTextureLockBounds(unsigned int aTextureIndex) {
+		if (aTextureIndex > mTextureList.size() - 1) aTextureIndex = mTextureList.size() - 1;
+		mTextureList[aTextureIndex]->toggleLockBounds();
 	}
 
 	void VDMix::setCrossfade(float aCrossfade) {
