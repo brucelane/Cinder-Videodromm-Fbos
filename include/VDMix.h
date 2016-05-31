@@ -90,6 +90,9 @@ namespace VideoDromm
 
 		bool							getInputTextureLockBounds(unsigned int aTextureIndex);
 		void							toggleInputTextureLockBounds(unsigned int aTextureIndex);
+		unsigned int					getInputTextureOriginalWidth(unsigned int aTextureIndex);
+		unsigned int					getInputTextureOriginalHeight(unsigned int aTextureIndex);
+
 
 		int								getFboTextureWidth(unsigned int aFboIndex);
 		int								getFboTextureHeight(unsigned int aFboIndex);
