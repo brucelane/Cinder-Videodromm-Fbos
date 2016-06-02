@@ -84,7 +84,7 @@ void _TBOX_PREFIX_App::fileDrop(FileDropEvent event)
 
 	if (ext == "png" || ext == "jpg")
 	{
-		mMixes[0]->loadImageFile(mFile, index, 0, right);
+		mMixes[0]->loadImageFile(mFile, index, right);
 	}
 	else if (ext == "glsl")
 	{		
@@ -124,11 +124,8 @@ void _TBOX_PREFIX_App::draw()
 	gl::draw(mMixes[0]->getFboTexture(1), Rectf(384, 0, 512, 128));
 	gl::draw(mMixes[0]->getTexture(), Rectf(512, 0, 640, 128));
 
-	for (int f = 0; f < mMixes[0]->getFboCount(); f++) {
-		for (int i = 0; i < mMixes[0]->getInputTexturesCount(f); i++) {
-			gl::draw(mMixes[0]->getFboInputTexture(f, i), Rectf(i * 128, 128 + (f*128), 128 + i * 128, 256 + (f*128)));
-		}
-		
+	for (int i = 0; i < mMixes[0]->getInputTexturesCount(); i++) {
+		gl::draw(mMixes[0]->getInputTexture(i), Rectf(i * 128, 128 + 128, 128 + i * 128, 256 + 128));
 	}
 }
 
