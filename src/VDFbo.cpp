@@ -95,7 +95,7 @@ namespace VideoDromm {
 		}
 		return rtn;
 	}
-	string VDFbo::getFragmentShaderText(unsigned int aFboIndex) {
+	string VDFbo::getFragmentShaderText() {
 		return mFragmentShaderText;
 	}
 

@@ -135,8 +135,7 @@ namespace VideoDromm
 		bool							initFboList();
 		//! Fbo
 		gl::FboRef						mMixFbo, mLeftFbo, mRightFbo;
-		void							renderLeftFbo();
-		void							renderRightFbo();
+
 		unsigned int					mRightFboIndex;
 		unsigned int					mLeftFboIndex;
 		bool							mUseLeftFbo;

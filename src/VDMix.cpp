@@ -217,7 +217,7 @@ namespace VideoDromm {
 	}
 	string VDMix::getFboFragmentShaderText(unsigned int aFboIndex) {
 		if (aFboIndex > mFboList.size() - 1) aFboIndex = 0;
-		return mFboList[aFboIndex]->getFragmentShaderText(aFboIndex);
+		return mFboList[aFboIndex]->getFragmentShaderText();
 	}
 	VDMixList VDMix::readSettings(VDSettingsRef aVDSettings, VDAnimationRef aVDAnimation, const DataSourceRef &source) {
 		XmlTree			doc;
@@ -454,61 +454,17 @@ namespace VideoDromm {
 	void VDMix::setCrossfade(float aCrossfade) {
 		mVDAnimation->controlValues[21] = aCrossfade;
 	}
-	// Render left FBO
-	void VDMix::renderLeftFbo()
-	{
-		gl::ScopedFramebuffer fbScp(mLeftFbo);
-		// clear out the FBO with blue
-		gl::clear(Color::black());
 
-		// setup the viewport to match the dimensions of the FBO
-		gl::ScopedViewport scpVp(ivec2(0), mLeftFbo->getSize());
-
-		// render the left fbo
-		gl::ScopedGlslProg shaderScp(gl::getStockShader(gl::ShaderDef().texture()));
-		gl::ScopedTextureBind tex(mFboList[mLeftFboIndex]->getTexture());
-		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
-	}
-	// Render left FBO
-	void VDMix::renderRightFbo()
-	{
-		gl::ScopedFramebuffer fbScp(mRightFbo);
-		// clear out the FBO with red
-		gl::clear(Color::black());
-
-		// setup the viewport to match the dimensions of the FBO
-		gl::ScopedViewport scpVp(ivec2(0), mRightFbo->getSize());
-
-		// render the right fbo
-		gl::ScopedGlslProg shaderScp(gl::getStockShader(gl::ShaderDef().texture()));
-
-		gl::ScopedTextureBind tex(mFboList[mRightFboIndex]->getTexture());
-
-		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
-	}
 	ci::gl::TextureRef VDMix::getTexture() {
 		iChannelResolution0 = vec3(mPosX, mPosY, 0.5);
 		gl::ScopedFramebuffer fbScp(mMixFbo);
-		gl::clear(Color::white());
-		// setup the viewport to match the dimensions of the FBO
+		gl::clear(Color::gray(0.2f));
 		gl::ScopedViewport scpVp(ivec2(0), mMixFbo->getSize());
 		gl::ScopedGlslProg shaderScp(mMixShader);
-		//if (mUseLeftFbo) {
-			renderLeftFbo();
-			mLeftFbo->bindTexture(0);
-		/*}
-		else {
-			//mTextureList[mFboList[mLeftFboIndex]->getInputTextureIndex()]->getTexture()->bind(0);
-			getInputTexture(mFboList[mLeftFboIndex]->getInputTextureIndex())->bind(0);
-		}
-		if (mUseRightFbo) {*/
-			renderRightFbo();
-			mRightFbo->bindTexture(1);
-		/*}
-		else {
-			//mTextureList[mFboList[mRightFboIndex]->getInputTextureIndex()]->getTexture()->bind(1);
-			getInputTexture(mFboList[mRightFboIndex]->getInputTextureIndex())->bind(1);
-		}*/
+		gl::ScopedTextureBind tex1(getFboTexture(1));
+		gl::ScopedTextureBind tex2(getFboTexture(2));
+		gl::drawSolidRect(Rectf(0, 0, mVDSettings->mRenderWidth, mVDSettings->mRenderHeight));
+
 		mMixShader->uniform("iGlobalTime", mVDSettings->iGlobalTime);
 		mMixShader->uniform("iResolution", vec3(mWidth, mHeight, 1.0));
 		mMixShader->uniform("iChannelResolution[0]", iChannelResolution0);
@@ -566,7 +522,7 @@ namespace VideoDromm {
 		mMixShader->uniform("iXorY", mVDSettings->iXorY);
 		mMixShader->uniform("iBadTv", mVDSettings->iBadTv);
 
-		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
+		gl::drawSolidRect(Rectf(0, 0, mMixFbo->getWidth(), mMixFbo->getHeight()));
 		return mMixFbo->getColorTexture();
 	}
 } // namespace VideoDromm

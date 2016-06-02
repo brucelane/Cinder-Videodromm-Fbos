@@ -59,7 +59,7 @@ namespace VideoDromm
 		void							setZoom(float aZoom);
 		// shader
 		int								loadFragmentShader(string aFilePath);
-		string							getFragmentShaderText(unsigned int aFboIndex);
+		string							getFragmentShaderText();
 		// textures
 		void							setInputTexture(unsigned int aTextureIndex);
 		unsigned int					getInputTextureIndex() { return inputTextureIndex; };
