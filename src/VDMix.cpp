@@ -461,8 +461,8 @@ namespace VideoDromm {
 		gl::clear(Color::gray(0.2f));
 		gl::ScopedViewport scpVp(ivec2(0), mMixFbo->getSize());
 		gl::ScopedGlslProg shaderScp(mMixShader);
-		gl::ScopedTextureBind tex1(getFboTexture(1));
-		gl::ScopedTextureBind tex2(getFboTexture(2));
+		gl::ScopedTextureBind tex1(getFboTexture(mLeftFboIndex));//1
+		gl::ScopedTextureBind tex2(getFboTexture(mRightFboIndex));//2
 		gl::drawSolidRect(Rectf(0, 0, mVDSettings->mRenderWidth, mVDSettings->mRenderHeight));
 
 		mMixShader->uniform("iGlobalTime", mVDSettings->iGlobalTime);
