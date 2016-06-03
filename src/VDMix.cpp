@@ -465,6 +465,7 @@ namespace VideoDromm {
 		gl::ScopedTextureBind tex2(getFboTexture(mRightFboIndex));
 		gl::drawSolidRect(Rectf(0, 0, mVDSettings->mRenderWidth, mVDSettings->mRenderHeight));
 
+		vec3 spectrum = vec3(mVDAnimation->iFreqs[0], mVDAnimation->iFreqs[1], mVDAnimation->iFreqs[2]);
 		mMixShader->uniform("iGlobalTime", mVDSettings->iGlobalTime);
 		mMixShader->uniform("iResolution", vec3(mWidth, mHeight, 1.0));
 		mMixShader->uniform("iChannelResolution[0]", iChannelResolution0);
@@ -477,6 +478,7 @@ namespace VideoDromm {
 		mMixShader->uniform("iFreq1", mVDAnimation->iFreqs[1]);
 		mMixShader->uniform("iFreq2", mVDAnimation->iFreqs[2]);
 		mMixShader->uniform("iFreq3", mVDAnimation->iFreqs[3]);
+		mMixShader->uniform("spectrum", spectrum);
 		mMixShader->uniform("iChannelTime", mVDSettings->iChannelTime, 4);
 		mMixShader->uniform("iColor", vec3(mVDAnimation->controlValues[1], mVDAnimation->controlValues[2], mVDAnimation->controlValues[3]));// mVDSettings->iColor);
 		mMixShader->uniform("iBackgroundColor", vec3(mVDAnimation->controlValues[5], mVDAnimation->controlValues[6], mVDAnimation->controlValues[7]));// mVDSettings->iBackgroundColor);
