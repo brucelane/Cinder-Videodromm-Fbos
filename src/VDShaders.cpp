@@ -2,9 +2,10 @@
 
 using namespace VideoDromm;
 
-VDShaders::VDShaders()
+VDShaders::VDShaders(VDSettingsRef aVDSettings)
 {
 	CI_LOG_V("VDShaders constructor");
+	mVDSettings = aVDSettings;
 	previousFileName = "0";
 	currentFileName = "0";
 	mShaderIndex = 4;
@@ -165,18 +166,26 @@ string VDShaders::loadFboPixelFragmentShader(string aFilePath) {
 			newShader.active = true;
 			mFragmentShaders.push_back(newShader);
 			rtn = fs;
+			mVDSettings->mMsg = "loadFboPixelFragmentShader success:" + mFragFileName;
+			mVDSettings->newMsg = true;
 		}
 		else {
-			CI_LOG_V(mFragFile + " does not exist");
+			CI_LOG_V(mFragFileName + " does not exist");
+			mVDSettings->mMsg = "loadFboPixelFragmentShader does not exist:" + mFragFileName;
+			mVDSettings->newMsg = true;
 		}
 	}
 	catch (gl::GlslProgCompileExc &exc) {
 		mError = string(exc.what());
 		CI_LOG_V(aFilePath + " unable to load/compile shader err:" + mError);
+		mVDSettings->mMsg = "loadFboPixelFragmentShader error:" + mError;
+		mVDSettings->newMsg = true;
 	}
 	catch (const std::exception &e) {
 		mError = string(e.what());
 		CI_LOG_V(aFilePath + " unable to load shader err:" + mError);
+		mVDSettings->mMsg = "loadFboPixelFragmentShader error:" + mError;
+		mVDSettings->newMsg = true;
 	}
 	return rtn;
 }
@@ -212,7 +221,7 @@ int VDShaders::loadPixelFragmentShaderAtIndex(string aFilePath, int index)
 		}
 		else
 		{
-			CI_LOG_V(mFragFile + " does not exist:" + aFilePath);
+			CI_LOG_V(" does not exist:" + aFilePath);
 		}
 	}
 	catch (gl::GlslProgCompileExc &exc)

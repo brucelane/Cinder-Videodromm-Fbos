@@ -22,7 +22,7 @@ namespace VideoDromm {
 		mPosX = mPosY = 0.0f;
 		mZoom = 1.0f;
 		// init shaders
-		mVDShaders = VDShaders::create();
+		mVDShaders = VDShaders::create(mVDSettings);
 
 		// init the fbo whatever happens next
 		gl::Fbo::Format format;

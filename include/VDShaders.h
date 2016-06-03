@@ -9,6 +9,8 @@
 #include "Resources.h"
 // Logger
 #include "VDLog.h"
+// Settings
+#include "VDSettings.h"
 // Watchdog
 #include "Watchdog.h"
 
@@ -33,12 +35,12 @@ namespace VideoDromm
 	};
 	class VDShaders {
 	public:
-		VDShaders();
+		VDShaders(VDSettingsRef aVDSettings);
 		virtual					~VDShaders();
 		void update();
-		static VDShadersRef	create()
+		static VDShadersRef	create(VDSettingsRef aVDSettings)
 		{
-			return shared_ptr<VDShaders>(new VDShaders());
+			return shared_ptr<VDShaders>(new VDShaders(aVDSettings));
 		}
 
 		string							getFragFileName() { return mFragFileName; };
@@ -76,6 +78,8 @@ namespace VideoDromm
 		std::string						loadFboPixelFragmentShader(string aFilePath);
 
 	private:
+		// Settings
+		VDSettingsRef					mVDSettings;
 
 		string							mFragFile;
 		string							mFragFileName;
