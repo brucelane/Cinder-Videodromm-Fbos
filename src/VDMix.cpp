@@ -473,6 +473,7 @@ namespace VideoDromm {
 		mMixShader->uniform("iZoom", mZoom);
 		mMixShader->uniform("iChannel0", 0);
 		mMixShader->uniform("iChannel1", 1);
+		mMixShader->uniform("iChannel2", 2);
 		mMixShader->uniform("iAudio0", 0);
 		mMixShader->uniform("iFreq0", mVDAnimation->iFreqs[0]);
 		mMixShader->uniform("iFreq1", mVDAnimation->iFreqs[1]);
